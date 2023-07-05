@@ -1,4 +1,4 @@
-from modules import global_config
+from modules import runtime_config
 from modules import helpers
 from flask import render_template, request, redirect, url_for, send_from_directory, Response
 import os
@@ -6,8 +6,8 @@ from os.path import join as join_path
 import zipfile
 import logging
 
-app = global_config.app
-temp_grafana_plugins_dir = global_config.temp_grafana_plugins_dir
+app = runtime_config.app
+temp_grafana_plugins_dir = runtime_config.temp_grafana_plugins_dir
 
 
 @app.route('/')

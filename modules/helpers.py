@@ -1,4 +1,4 @@
-from modules import global_config
+from modules import runtime_config
 from flask import Response
 import os
 from time import sleep
@@ -37,19 +37,19 @@ def prepare_grafana_plugins_dir(dir_path):
         raise Exception(f'Failed to create create grafana plugins dir: "{dir_path}" - {str(e)}')
     
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in global_config.app.config['ALLOWED_EXTENSIONS']
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in runtime_config.app.config['ALLOWED_EXTENSIONS']
 
 
 
 
 def flask_logger():
     """reads logging information"""
-    with open(global_config.log_file_path) as f:
+    with open(runtime_config.log_file_path) as f:
         while True:
             yield f.read()
             sleep(1)
     # Create empty logfile, old logging will be deleted
-    open(global_config.log_file_path, 'w').close()
+    open(runtime_config.log_file_path, 'w').close()
 
 def stream():
     """returns logging information"""
