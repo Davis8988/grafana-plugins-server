@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
+from os.path import join as join_path
 import zipfile
 import logging
+import shutil
 
 app = Flask(__name__)
 
@@ -13,7 +15,7 @@ def get_persistent_temp_dir():
     return temp_dir
 
 uploads_folder = os.environ.get('UPLOADS_DIR', "uploads")
-temp_uploads_folder = os.path.join(os.environ.get('TEMP_UPLOADS_FOLDER', get_persistent_temp_dir()), "grafana-plguins")
+temp_uploads_folder = join_path(os.environ.get('TEMP_UPLOADS_FOLDER', get_persistent_temp_dir()), "grafana-plguins")
 
 
 # Configure app settings
@@ -42,23 +44,25 @@ def index():
 @app.route('/create_directory', methods=['POST'])
 def create_directory():
     directory_name = request.form['directory_name']
-    directory_path = os.path.join(app.config['UPLOAD_FOLDER'], directory_name)
+    directory_path = join_path(app.config['UPLOAD_FOLDER'], directory_name)
     os.makedirs(directory_path, exist_ok=True)
     logging.info(f'Created directory: {directory_name}')
     return redirect(url_for('index'))
 
 
-def search_plugin_json(zip_ref, file_list):
-    logging.info(f'Searching for "plugin.json" file in the uploaded zip')
+def search_plugin_json(file_list):
+    logging.info(f'Searching for "plugin.json" file in given zip')
     for file in file_list:
         if file.endswith('/plugin.json'):
             return file
     return None
 
 
-def save_file_in_dir(file, path_to_save_at):
+def save_file_in_dir(file, dir_path):
     file_name = file.filename
-    logging.info(f'Saving file: {file_name} at: {path_to_save_at}')
+    logging.info(f'Saving file: {file_name} at: {dir_path}')
+    
+    path_to_save_at = join_path(dir_path, file_name)
     if os.path.exists(path_to_save_at):
         logging.info(f'File already exists: {path_to_save_at} - attempting to remove it..')
         try:
@@ -67,48 +71,176 @@ def save_file_in_dir(file, path_to_save_at):
             logging.info(f'Failed to remove already existing file: {path_to_save_at} ')
             logging.error(f'Error while removing existing file: {str(e)}')
             return f'Error: Failed to remove existing file: {path_to_save_at}'
+        if os.path.exists(path_to_save_at):
+            logging.error(f'Even after removing existing file: "{path_to_save_at}" it still exists - Failed to remove already existing file: {path_to_save_at}')
+            return f'Error: Even after removing existing file: "{path_to_save_at}" it still exists - Failed to remove already existing file: {path_to_save_at}'
+        logging.info(f'Success removing old file: {path_to_save_at}')
     try:
+        logging.info(f'Attempting to save file: {file_name} at: {dir_path}')
         file.save(path_to_save_at)
         logging.info(f'File saved: {file.filename}')
     except Exception as e:
         logging.error(f'Error while saving file: {str(e)}')
         return f'Error: Failed to save file: {file.filename} at: {path_to_save_at}'
+    return path_to_save_at
+
+def create_dir(dir_path):
+    if os.path.exists(dir_path):
+        return
+    logging.info(f'Creating dir: {dir_path}')
+    try:
+        os.makedirs(dir_path)
+        if not os.path.exists(dir_path):
+            raise Exception(f'Even after creating dir: "{dir_path}" it is still missing or unreachable - Failed to create dir: {dir_path}')
+    except Exception as e:
+        logging.error(f'Error creating dir: {dir_path}')
+        logging.error(f'{str(e)}')
+        raise Exception(f'Error creating dir: {str(e)}')
+    logging.info(f'Success creating dir: {dir_path}')
+    
+def validate_uploaded_zip_file(zip_file_path):
+    logging.info(f'Validating uploaded zip file: {zip_file_path}')
+    if not file_exists(zip_file_path):
+        logging.error(f'Missing or unreachable uploaded zip file: {zip_file_path} - cannot validate it')
+        raise Exception(f'Missing or unreachable uploaded zip file: {zip_file_path} - cannot validate it')
+    print_zip_file_containing_files(zip_file_path)
+    get_plugins_json_file_path_from_zip_file(zip_file_path)
+
+def print_zip_file_containing_files(zip_file):
+    with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+        # Check if plugin.json exists in the zip file
+        file_list = zip_ref.namelist()
+        logging.info(f'Listing files under uploaded zip: {zip_file}')
+        for x in file_list:
+            logging.info(f' - {x}')
+
+def get_plugins_json_file_path_from_zip_file(zip_file):
+    plugin_json_file_path = None
+    with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+        # Check if plugin.json exists in the zip file
+        file_list = zip_ref.namelist()
+
+        # Search for plugin.json recursively
+        plugin_json_file_path = search_plugin_json(file_list)
+    if not plugin_json_file_path:
+        raise Exception(f'"plugin.json" not found in the uploaded zip file: {zip_file}')
+    return plugin_json_file_path
+
+def file_exists(file_path):
+    return os.path.exists(file_path)
+
+def remove_file(file_path):
+    if not file_exists(file_path):
+        return
+    logging.info(f'Removing file: {file_path}')
+    try:
+        os.remove(file_path)
+        if file_exists(file_path):
+            raise Exception( f'Even after removing the file: "{file_path}" it still exists')
+    except Exception as e:
+        logging.error(f'Error while removing existing file: {file_path}')
+        logging.error(f'{str(e)}')
+        raise Exception(f'Error: Failed to remove existing file: {path_to_save_at}')
+    logging.info(f'Success removing file: {file_path}')
+    
+def copy_file(src_file, dest_file):
+    logging.info(f'Copying file: {src_file} to: {dest_file}')
+    if not file_exists(src_file):
+        logging.error(f'Missing or unreachable src file to copy: {src_file} - cannot copy it to: {dest_file}')
+        raise Exception(f'Missing or unreachable src file to copy: {src_file} - cannot copy it to: {dest_file}')
+    if file_exists(dest_file):
+        remove_file(dest_file)
+    try:
+        shutil.copyfile(src_file, dest_file)
+    except Exception as e:
+        logging.error(f'Error - Failed to copy file: {src_file} to: {dest_file}')
+        logging.error(f'{str(e)}')
+        raise Exception(f'Error: Failed to copy file: {src_file} to: {dest_file}')
+    # Validate
+    if not file_exists(dest_file):
+        logging.error(f'Even after copying file: {src_file} to: {dest_file} it is still missing or unreachable')
+        raise Exception(f'Even after copying file: {src_file} to: {dest_file} it is still missing or unreachable')
+    logging.info(f'Success copying file: {src_file} to: {dest_file}')
+    
+def copy_zip_file_to_plugins_dir(zip_file_path, plugins_dir):
+    create_dir(plugins_dir)
+    zip_file_name      = get_file_name_from_path(zip_file_path)
+    dest_zip_file_path = join_path(plugins_dir, zip_file_name)
+    copy_file(zip_file_path, dest_zip_file_path)
+    return dest_zip_file_path
+
+def get_file_name_from_path(file_path):
+    # if not file_exists(file_path):
+        # logging.error(f'Missing or unreachable file path: {file_path} - cannot get its name')
+        # raise Exception(f'Missing or unreachable file path: {file_path} - cannot get its name')
+    return os.path.basename(file_path)
+
+def extract_file_from_zip_to_dir(src_zip_file, file_to_extract, dest_dir_to_extract_to):
+    logging.info(f'Extracting {file_to_extract} from: {src_zip_file} to: {dest_dir_to_extract_to}')
+    extract_file_name = get_file_name_from_path(file_to_extract)
+    dest_file_path = join_path(dest_dir_to_extract_to, extract_file_name)
+    remove_file(dest_file_path)  # Remove old file if it already exists..
+    with zipfile.ZipFile(src_zip_file, 'r') as zip_ref:
+        zip_ref.extract(file_to_extract, path=dest_dir_to_extract_to)
+    logging.info(f'Success extracting {file_to_extract} from: {src_zip_file} to: {dest_dir_to_extract_to}')
+    
+
+def remove_directory_with_content(dir_path):
+    logging.info(f'Removing directory with its content: {dir_path}')
+    if os.path.exists(dir_path):
+        try:
+            shutil.rmtree(dir_path)
+            if os.path.exists(dir_path):
+                raise Exception(f'Even after removing the directory: "{dir_path}" it still exists')
+        except Exception as e:
+            logging.error(f'Error while removing the directory: {dir_path}')
+            logging.error(f'{str(e)}')
+            raise Exception(f'Error: Failed to remove the directory: {dir_path}')
+        logging.info(f'Success removing the directory with its content: {dir_path}')
+
+@app.route('/remove_directory', methods=['POST'])
+def remove_directory():
+    directory_name = request.form['directory_name']
+    directory_path = join_path(app.config['UPLOAD_FOLDER'], directory_name)
+    remove_directory_with_content(directory_path)
+    logging.info(f'Removed directory: {directory_name}')
+    return redirect(url_for('index'))
+
+@app.route('/remove_file', methods=['POST'])
+def remove_file():
+    directory_name = request.form['directory_name']
+    file_name = request.form['file_name']
+    file_path = join_path(app.config['UPLOAD_FOLDER'], directory_name, file_name)
+    remove_file(file_path)
+    logging.info(f'Removed file: {file_name} from directory: {directory_name}')
+    return redirect(url_for('index'))
 
 @app.route('/upload', methods=['POST'])
 def upload():
     directory_name = request.form['directory']
-    file           = request.files['file']
-    
+    file = request.files['file']
+
     if not file or not allowed_file(file.filename):
-        logging.error('Error while uploading file: {file} - Invalid file or file type not allowed')
-        return f'Error uploading: "{file.filename}" - Invalid file or file type not allowed'
-    
+        error_message = f'Error uploading: "{file.filename}" - Invalid file or file type not allowed'
+        logging.error(error_message)
+        return error_message
+
     # Save the uploaded file into a temp dir first..
-    temp_file_path = os.path.join(temp_uploads_folder, file.filename)
-    save_file_in_dir(file, temp_file_path)
+    temp_uploaded_file_path = save_file_in_dir(file, temp_uploads_folder)
     
-    directory_path = os.path.join(app.config['UPLOAD_FOLDER'], directory_name)
-    file_path = os.path.join(directory_path, file.filename)
-    file.save(file_path)
-
+    # Validate uploaded zip file:
+    validate_uploaded_zip_file(temp_uploaded_file_path)
+    
+    
+    directory_path       = join_path(app.config['UPLOAD_FOLDER'], directory_name)
+    copied_zip_file_path = copy_zip_file_to_plugins_dir(temp_uploaded_file_path, directory_path)
+    file_path            = copied_zip_file_path
+    
+    plugin_json_file_path = get_plugins_json_file_path_from_zip_file(file_path)
+    
     try:
-        with zipfile.ZipFile(file_path, 'r') as zip_ref:
-            # Check if plugin.json exists in the zip file
-            file_list = zip_ref.namelist()
-            logging.info(f'Listing files under uploaded zip: {file.filename}')
-            for x in file_list:
-                logging.info(f' - {x}')
-             
-             # Search for plugin.json recursively
-            plugin_json_file_path = search_plugin_json(zip_ref, file_list)
-
-            if not plugin_json_file_path:
-                raise Exception(f'"plugin.json" not found in the uploaded zip file: {file.filename}')
-
-
-            logging.info(f'Extracting plugin.json: {plugin_json_file_path} to: {directory_path}')
-            zip_ref.extract(plugin_json_file_path, path=directory_path)
-            logging.info(f'Uploaded and extracted file: {file.filename}')
+        extract_file_from_zip_to_dir(file_path, plugin_json_file_path, directory_path)
+        logging.info(f'Success uploading and extracting file: {file.filename}')
     except Exception as e:
         # Remove the uploaded file
         os.remove(file_path)

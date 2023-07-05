@@ -4,6 +4,21 @@
 <head>
     <title>Grafana Plugins Dashboard</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Additional CSS for log window */
+        .log-window {
+            background-color: #f8f8f8;
+            padding: 10px;
+            margin-top: 20px;
+            height: 200px;
+            overflow-y: scroll;
+        }
+		.remove-button {
+            float: right;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <h1>Grafana Plugins Dashboard</h1>
@@ -40,5 +55,29 @@
             </li>
         {% endfor %}
     </ul>
+	<!-- Log Window -->
+    <div class="log-window">
+        <h2>Log Window</h2>
+        {% for log in logs %}
+            <p>{{ log }}</p>
+        {% endfor %}
+    </div>
+	
+	<h2>Remove Directory</h2>
+	<form method="POST" action="{{ url_for('remove_directory') }}">
+		<input type="text" name="directory_name" placeholder="Directory Name">
+		<input type="submit" value="Remove">
+	</form>
+
+	<h2>Remove File</h2>
+	<form method="POST" action="{{ url_for('remove_file') }}">
+		<select name="directory_name">
+			{% for directory in directories %}
+				<option value="{{ directory }}">{{ directory }}</option>
+			{% endfor %}
+		</select>
+		<input type="text" name="file_name" placeholder="File Name">
+		<input type="submit" value="Remove">
+	</form>
 </body>
 </html>
