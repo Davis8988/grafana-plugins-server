@@ -11,7 +11,7 @@ script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 app = Flask(__name__)
 global_config.app = app
 
-log_file_path            = os.environ.get('LOG_FILE', join_path(script_directory, "logs", "app.log"))
+log_file_path            = os.environ.get('LOG_FILE',            join_path(script_directory, "logs", "app.log"))
 grafana_plugins_dir      = os.environ.get('GRAFANA_PLUGINS_DIR', join_path(script_directory, "grafana_plugins"))
 temp_grafana_plugins_dir = join_path(os.environ.get('TEMP_GRAFANA_PLUGINS_DIR', helpers.get_persistent_temp_dir()), "grafana_plguins")
 
