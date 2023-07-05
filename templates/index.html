@@ -109,8 +109,8 @@
 		
 		function scrollLogWindowToBottom() {
 			var logWindow = document.getElementById('logging-window-frame');
-			<!-- logWindow.scrollTop = logWindow.scrollHeight; -->
-			logWindow.scrollTo(logWindow.scrollHeight, logWindow.scrollHeight);
+			logWindow.scrollTop = logWindow.scrollHeight;
+			// logWindow.scrollTo(logWindow.scrollHeight, logWindow.scrollHeight);
 		}
 		
 		var output = document.getElementById('output');
