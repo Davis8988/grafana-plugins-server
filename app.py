@@ -1,13 +1,9 @@
 from modules import global_config
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, Response
+from flask import Flask
 import os
 import sys
-import datetime 
-from time import sleep
 from os.path import join as join_path
-import zipfile
 import logging
-import shutil
 from modules import helpers
 
 script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
