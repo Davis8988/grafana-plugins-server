@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 import os
 import sys
 import datetime 
+from time import sleep
 from os.path import join as join_path
 import zipfile
 import logging
@@ -28,16 +29,15 @@ def prepare_logging_dir(log_file_path):
         print(f'Error while attempting to create logs dir: {log_file_dir}')
         print(f'{str(e)}')
         raise Exception(f'Failed to create logs dir: "{log_file_dir}" - {str(e)}')
-    
 
-log_file_path       = os.environ.get('LOG_FILE', join_path(script_directory, "logs", "app.log"))
-uploads_folder      = os.environ.get('UPLOADS_DIR', join_path(script_directory, "uploads"))
-temp_uploads_folder = join_path(os.environ.get('TEMP_UPLOADS_FOLDER', get_persistent_temp_dir()), "grafana-plguins")
+log_file_path            = os.environ.get('LOG_FILE', join_path(script_directory, "logs", "app.log"))
+grafana_plugins_dir      = os.environ.get('GRAFANA_PLUGINS_DIR', join_path(script_directory, "grafana_plugins"))
+temp_grafana_plugins_dir = join_path(os.environ.get('TEMP_GRAFANA_PLUGINS_DIR', get_persistent_temp_dir()), "grafana_plguins")
 
 
 # Configure app settings
-app.config['UPLOAD_FOLDER']      = uploads_folder
-app.config['ALLOWED_EXTENSIONS'] = {'zip'}
+app.config['GRAFANA_PLUGINS_DIR'] = grafana_plugins_dir
+app.config['ALLOWED_EXTENSIONS']  = {'zip'}
 
 
 
@@ -62,7 +62,7 @@ def allowed_file(filename):
 @app.route('/index', methods = ['GET', 'POST'])
 def index():
     logging.info('Accessed main dashboard page')
-    directories = os.listdir(app.config['UPLOAD_FOLDER'])
+    directories = os.listdir(app.config['GRAFANA_PLUGINS_DIR'])
     return render_template('index.html', 
                             directories=directories,
                             os=os,
@@ -71,7 +71,7 @@ def index():
 @app.route('/plugins', methods = ['GET'])
 def plugins_page():
     logging.info('Accessed plugins page')
-    directories = os.listdir(app.config['UPLOAD_FOLDER'])
+    directories = os.listdir(app.config['GRAFANA_PLUGINS_DIR'])
     return render_template('plugins_page.html', 
                             directories=directories,
                             os=os,
@@ -80,7 +80,7 @@ def plugins_page():
 @app.route('/create_directory', methods=['POST'])
 def create_directory():
     directory_name = request.form['directory_name']
-    directory_path = join_path(app.config['UPLOAD_FOLDER'], directory_name)
+    directory_path = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name)
     os.makedirs(directory_path, exist_ok=True)
     logging.info(f'Created directory: {directory_name}')
     return redirect(url_for('index'))
@@ -114,7 +114,7 @@ def search_plugin_json(file_list):
 def save_file_in_dir(file, dir_path):
     file_name = file.filename
     logging.info(f'Saving file: {file_name} at: {dir_path}')
-    
+    create_dir(dir_path)
     path_to_save_at = join_path(dir_path, file_name)
     if os.path.exists(path_to_save_at):
         logging.info(f'File already exists: {path_to_save_at} - attempting to remove it..')
@@ -253,7 +253,7 @@ def remove_directory_with_content(dir_path):
 
 @app.route('/remove/<path:file_or_dir_path>', methods=['GET'])
 def remove_file_or_dir(file_or_dir_path):
-    path_to_remove = join_path(app.config['UPLOAD_FOLDER'], file_or_dir_path)
+    path_to_remove = join_path(app.config['GRAFANA_PLUGINS_DIR'], file_or_dir_path)
     logging.info(f'Removing: {path_to_remove}')
     if not file_exists(path_to_remove):
         return f'Error: File or directory not found: {path_to_remove}'
@@ -272,7 +272,7 @@ def remove_file_or_dir(file_or_dir_path):
 @app.route('/remove_directory', methods=['POST'])
 def remove_directory():
     directory_name = request.form['directory_name']
-    directory_path = join_path(app.config['UPLOAD_FOLDER'], directory_name)
+    directory_path = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name)
     remove_directory_with_content(directory_path)
     logging.info(f'Removed directory: {directory_name}')
     return redirect(url_for('index'))
@@ -281,7 +281,7 @@ def remove_directory():
 def remove_file():
     directory_name = request.form['directory_name']
     file_name = request.form['file_name']
-    file_path = join_path(app.config['UPLOAD_FOLDER'], directory_name, file_name)
+    file_path = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name, file_name)
     delete_file(file_path)
     logging.info(f'Removed file: {file_name} from directory: {directory_name}')
     return redirect(url_for('index'))
@@ -290,26 +290,29 @@ def remove_file():
 def download_file(path):
     directory = os.path.dirname(path)
     filename = os.path.basename(path)
-    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], directory), filename, as_attachment=True)
+    return send_from_directory(os.path.join(app.config['GRAFANA_PLUGINS_DIR'], directory), filename, as_attachment=True)
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    directory_name = request.form['directory']
+    directory_name = request.form.get('directory', None)
     file = request.files['file']
-
+    if not directory_name:
+        error_message = f'Error uploading: "{file.filename}" - Invalid directory: "{directory_name}". Please choose a directory from the list or create one if non is existing..'
+        logging.error(error_message)
+        return error_message
     if not file or not allowed_file(file.filename):
         error_message = f'Error uploading: "{file.filename}" - Invalid file or file type not allowed'
         logging.error(error_message)
         return error_message
 
     # Save the uploaded file into a temp dir first..
-    temp_uploaded_file_path = save_file_in_dir(file, temp_uploads_folder)
+    temp_uploaded_file_path = save_file_in_dir(file, temp_grafana_plugins_dir)
     
     # Validate uploaded zip file:
     validate_uploaded_zip_file(temp_uploaded_file_path)
     
     
-    directory_path       = join_path(app.config['UPLOAD_FOLDER'], directory_name)
+    directory_path       = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name)
     copied_zip_file_path = copy_zip_file_to_plugins_dir(temp_uploaded_file_path, directory_path)
     file_path            = copied_zip_file_path
     
@@ -335,5 +338,10 @@ def upload():
     return redirect(url_for('index'))
 
 
+def prepare_grafana_plugins_dir(dir_path):
+    logging.info(f'Preparing grafana plugins dir at: {dir_path}')
+    create_dir(dir_path)
+
 if __name__ == '__main__':
+    prepare_grafana_plugins_dir(grafana_plugins_dir)
     app.run(debug=True, port=3011) 

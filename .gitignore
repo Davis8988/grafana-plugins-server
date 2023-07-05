@@ -2,6 +2,7 @@
 # .gitignore
 __pycache__/
 uploads/
+grafana_plugins/
 logs/
 *.log
 

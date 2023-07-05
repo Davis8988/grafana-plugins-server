@@ -73,7 +73,7 @@
                 {{ directory }}
                 <button class="remove-button" onclick="confirmAndRemove('{{ directory }}')">Remove</button>
                 <ul>
-                    {% for file in os.listdir(os.path.join(app.config['UPLOAD_FOLDER'], directory)) %}
+                    {% for file in os.listdir(os.path.join(app.config['GRAFANA_PLUGINS_DIR'], directory)) %}
                         {% if file != 'plugin.json' %}
                             <li>
                                 <a href="{{ url_for('download_file', path=directory+'/'+file) }}">{{ file }}</a>
