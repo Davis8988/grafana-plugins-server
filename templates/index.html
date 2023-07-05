@@ -3,6 +3,7 @@
 <html>
 <head>
     <title>Grafana Plugins Dashboard</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <h1>Grafana Plugins Dashboard</h1>
@@ -32,7 +33,7 @@
                 <ul>
                     {% for file in os.listdir(os.path.join(app.config['UPLOAD_FOLDER'], directory)) %}
                         {% if file != 'plugin.json' %}
-                            <li><a href="{{ url_for('uploaded_file', directory=directory, filename=file) }}">{{ file }}</a></li>
+                            <li><a href="{{ url_for('upload', directory=directory, file=file) }}">{{ file }}</a></li>
                         {% endif %}
                     {% endfor %}
                 </ul>
