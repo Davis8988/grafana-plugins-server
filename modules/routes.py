@@ -7,6 +7,7 @@ import zipfile
 import logging
 
 app = global_config.app
+temp_grafana_plugins_dir = global_config.temp_grafana_plugins_dir
 
 
 @app.route('/')
