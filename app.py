@@ -80,7 +80,7 @@ def index():
                             os=os,
                             app=app)
 
-@app.route('/plugins', methods = ['GET'])
+@app.route('/plugins/list', methods = ['GET'])
 def plugins_page():
     logging.info('Accessed plugins page')
     directories = os.listdir(app.config['GRAFANA_PLUGINS_DIR'])
@@ -313,7 +313,7 @@ def upload():
         logging.error(error_message)
         return error_message
     if not file or not allowed_file(file.filename):
-        error_message = f'Error uploading: "{file.filename}" - Invalid file or file type not allowed'
+        error_message = f'Error uploading: "{file.filename}" - Invalid file or file type not allowed. Only "*.zip" files are allowed'
         logging.error(error_message)
         return error_message
 
