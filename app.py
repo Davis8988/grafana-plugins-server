@@ -31,9 +31,12 @@ helpers.prepare_grafana_plugins_dir(grafana_plugins_dir)
 
 # Set up logging
 log_level = os.environ.get('LOG_LEVEL', logging.INFO)
+# create formatter
+formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s", "%Y-%m-%d %H:%M:%S")
 logging.basicConfig(
     level=log_level,
-    format=' %(name)s :: %(levelname)-5s :: %(message)s',  # Updated logging format
+    format=' %(asctime)s :: %(levelname)-5s :: %(message)s',  # Updated logging format
+    datefmt="%Y-%m-%d  %H:%M:%S",
     handlers=[
         logging.FileHandler(log_file_path),  # Log to file
         logging.StreamHandler()  # Log to console
