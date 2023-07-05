@@ -1,9 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, Response
 import os
+import sys
+import datetime 
 from os.path import join as join_path
 import zipfile
 import logging
 import shutil
+script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 
 app = Flask(__name__)
 
@@ -14,29 +17,62 @@ def get_persistent_temp_dir():
         temp_dir = os.environ.get('TEMP')
     return temp_dir
 
-uploads_folder = os.environ.get('UPLOADS_DIR', "uploads")
+def prepare_logging_dir(log_file_path):
+    log_file_dir = os.path.dirname(log_file_path)
+    if os.path.exists(log_file_dir):
+        return
+    print(f"Creating dir: {log_file_dir}")
+    try:
+        os.makedirs(log_file_dir, exist_ok=True)
+    except Exception as e:
+        print(f'Error while attempting to create logs dir: {log_file_dir}')
+        print(f'{str(e)}')
+        raise Exception(f'Failed to create logs dir: "{log_file_dir}" - {str(e)}')
+    
+
+log_file_path       = os.environ.get('LOG_FILE', join_path(script_directory, "logs", "app.log"))
+uploads_folder      = os.environ.get('UPLOADS_DIR', join_path(script_directory, "uploads"))
 temp_uploads_folder = join_path(os.environ.get('TEMP_UPLOADS_FOLDER', get_persistent_temp_dir()), "grafana-plguins")
 
 
 # Configure app settings
-app.config['UPLOAD_FOLDER']      = 'uploads'
+app.config['UPLOAD_FOLDER']      = uploads_folder
 app.config['ALLOWED_EXTENSIONS'] = {'zip'}
 
+
+
 # Set up logging
+prepare_logging_dir(log_file_path)
 log_level = os.environ.get('LOG_LEVEL', logging.INFO)
-logging.basicConfig(level=log_level)
+logging.basicConfig(
+    level=log_level,
+    format=' %(name)s :: %(levelname)-5s :: %(message)s',  # Updated logging format
+    handlers=[
+        logging.FileHandler(log_file_path),  # Log to file
+        logging.StreamHandler()  # Log to console
+    ]
+)
 
     
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+
 @app.route('/')
 @app.route('/index', methods = ['GET', 'POST'])
-@app.route('/')
 def index():
     logging.info('Accessed main dashboard page')
     directories = os.listdir(app.config['UPLOAD_FOLDER'])
     return render_template('index.html', 
+                            directories=directories,
+                            os=os,
+                            app=app)
+
+@app.route('/plugins', methods = ['GET'])
+def plugins_page():
+    logging.info('Accessed plugins page')
+    directories = os.listdir(app.config['UPLOAD_FOLDER'])
+    return render_template('plugins_page.html', 
                             directories=directories,
                             os=os,
                             app=app)
@@ -48,6 +84,23 @@ def create_directory():
     os.makedirs(directory_path, exist_ok=True)
     logging.info(f'Created directory: {directory_name}')
     return redirect(url_for('index'))
+
+
+
+
+def flask_logger():
+    """reads logging information"""
+    with open(log_file_path) as f:
+        while True:
+            yield f.read()
+            sleep(1)
+    # Create empty logfile, old logging will be deleted
+    open(log_file_path, 'w').close()
+
+@app.route("/log_stream", methods=["GET"])
+def stream():
+    """returns logging information"""
+    return Response(flask_logger(), mimetype="text/plain", content_type="text/event-stream")
 
 
 def search_plugin_json(file_list):
@@ -129,7 +182,7 @@ def get_plugins_json_file_path_from_zip_file(zip_file):
 def file_exists(file_path):
     return os.path.exists(file_path)
 
-def remove_file(file_path):
+def delete_file(file_path):
     if not file_exists(file_path):
         return
     logging.info(f'Removing file: {file_path}')
@@ -149,7 +202,7 @@ def copy_file(src_file, dest_file):
         logging.error(f'Missing or unreachable src file to copy: {src_file} - cannot copy it to: {dest_file}')
         raise Exception(f'Missing or unreachable src file to copy: {src_file} - cannot copy it to: {dest_file}')
     if file_exists(dest_file):
-        remove_file(dest_file)
+        delete_file(dest_file)
     try:
         shutil.copyfile(src_file, dest_file)
     except Exception as e:
@@ -179,7 +232,7 @@ def extract_file_from_zip_to_dir(src_zip_file, file_to_extract, dest_dir_to_extr
     logging.info(f'Extracting {file_to_extract} from: {src_zip_file} to: {dest_dir_to_extract_to}')
     extract_file_name = get_file_name_from_path(file_to_extract)
     dest_file_path = join_path(dest_dir_to_extract_to, extract_file_name)
-    remove_file(dest_file_path)  # Remove old file if it already exists..
+    delete_file(dest_file_path)  # Remove old file if it already exists..
     with zipfile.ZipFile(src_zip_file, 'r') as zip_ref:
         zip_ref.extract(file_to_extract, path=dest_dir_to_extract_to)
     logging.info(f'Success extracting {file_to_extract} from: {src_zip_file} to: {dest_dir_to_extract_to}')
@@ -198,6 +251,24 @@ def remove_directory_with_content(dir_path):
             raise Exception(f'Error: Failed to remove the directory: {dir_path}')
         logging.info(f'Success removing the directory with its content: {dir_path}')
 
+@app.route('/remove/<path:file_or_dir_path>', methods=['GET'])
+def remove_file_or_dir(file_or_dir_path):
+    path_to_remove = join_path(app.config['UPLOAD_FOLDER'], file_or_dir_path)
+    logging.info(f'Removing: {path_to_remove}')
+    if not file_exists(path_to_remove):
+        return f'Error: File or directory not found: {path_to_remove}'
+
+    if os.path.isfile(path_to_remove):
+        # It's a file
+        delete_file(path_to_remove)
+        logging.info(f'Removed file: {path_to_remove}')
+    else:
+        # It's a directory
+        remove_directory_with_content(path_to_remove)
+        logging.info(f'Removed directory: {path_to_remove}')
+    
+    return redirect(url_for('index'))
+
 @app.route('/remove_directory', methods=['POST'])
 def remove_directory():
     directory_name = request.form['directory_name']
@@ -211,9 +282,15 @@ def remove_file():
     directory_name = request.form['directory_name']
     file_name = request.form['file_name']
     file_path = join_path(app.config['UPLOAD_FOLDER'], directory_name, file_name)
-    remove_file(file_path)
+    delete_file(file_path)
     logging.info(f'Removed file: {file_name} from directory: {directory_name}')
     return redirect(url_for('index'))
+
+@app.route('/download/<path:path>')
+def download_file(path):
+    directory = os.path.dirname(path)
+    filename = os.path.basename(path)
+    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], directory), filename, as_attachment=True)
 
 @app.route('/upload', methods=['POST'])
 def upload():
