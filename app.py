@@ -30,6 +30,17 @@ def prepare_logging_dir(log_file_path):
         print(f'{str(e)}')
         raise Exception(f'Failed to create logs dir: "{log_file_dir}" - {str(e)}')
 
+def prepare_grafana_plugins_dir(dir_path):
+    if os.path.exists(dir_path):
+        return
+    print(f"Creating dir: {dir_path}")
+    try:
+        os.makedirs(dir_path, exist_ok=True)
+    except Exception as e:
+        print(f'Error while attempting to create grafana plugins dir: {dir_path}')
+        print(f'{str(e)}')
+        raise Exception(f'Failed to create create grafana plugins dir: "{dir_path}" - {str(e)}')
+
 log_file_path            = os.environ.get('LOG_FILE', join_path(script_directory, "logs", "app.log"))
 grafana_plugins_dir      = os.environ.get('GRAFANA_PLUGINS_DIR', join_path(script_directory, "grafana_plugins"))
 temp_grafana_plugins_dir = join_path(os.environ.get('TEMP_GRAFANA_PLUGINS_DIR', get_persistent_temp_dir()), "grafana_plguins")
@@ -39,10 +50,11 @@ temp_grafana_plugins_dir = join_path(os.environ.get('TEMP_GRAFANA_PLUGINS_DIR', 
 app.config['GRAFANA_PLUGINS_DIR'] = grafana_plugins_dir
 app.config['ALLOWED_EXTENSIONS']  = {'zip'}
 
-
+# Prepare env:
+prepare_logging_dir(log_file_path)
+prepare_grafana_plugins_dir(grafana_plugins_dir)
 
 # Set up logging
-prepare_logging_dir(log_file_path)
 log_level = os.environ.get('LOG_LEVEL', logging.INFO)
 logging.basicConfig(
     level=log_level,
@@ -338,10 +350,5 @@ def upload():
     return redirect(url_for('index'))
 
 
-def prepare_grafana_plugins_dir(dir_path):
-    logging.info(f'Preparing grafana plugins dir at: {dir_path}')
-    create_dir(dir_path)
-
 if __name__ == '__main__':
-    prepare_grafana_plugins_dir(grafana_plugins_dir)
     app.run(debug=True, port=3011) 
