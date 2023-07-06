@@ -197,7 +197,12 @@ def remove_directory_with_content(dir_path):
     logging.info(f'Removing directory with its content: {dir_path}')
     if os.path.exists(dir_path):
         try:
-            shutil.rmtree(dir_path, ignore_errors=True)
+            for root, dirs, files in os.walk(dir_path):
+                for f in files:
+                    os.unlink(os.path.join(root, f))
+                for d in dirs:
+                    shutil.rmtree(os.path.join(root, d))
+            shutil.rmtree(dir_path)
             if os.path.exists(dir_path):
                 raise Exception(f'Even after removing the directory: "{dir_path}" it still exists')
         except Exception as e:
@@ -253,6 +258,7 @@ def construct_plugins_summary_json_file_data(grafana_plugins_obj_arr):
         "plugins": []
     }
 
+    found_plugins_map = {}
     for plugin_obj in grafana_plugins_obj_arr:
         plugin_data = {
             "id": plugin_obj.id,
