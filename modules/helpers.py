@@ -248,7 +248,9 @@ def list_first_level_dirs_under_path(dir_path):
 
 def calculate_uploaded_plugins_summary_json_file():
     logging.info('Calculating uploaded plugins summary json file')
-    for grafana_plugin_dir in runtime_config.grafana_plugins_repo_dir:
+    all_repo_dirs = list_first_level_dirs_under_path(runtime_config.grafana_plugins_repo_dir)
+    for grafana_plugin_dir in all_repo_dirs:
+        
         
     grafana_plugin_obj = read_plugin_details_from_plugin_json_file()
     pass
