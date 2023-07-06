@@ -10,7 +10,7 @@
     {% for directory in directories %}
         <h2>{{ directory }}</h2>
         <ul>
-            {% for file in os.listdir(os.path.join(app.config['GRAFANA_PLUGINS_DIR'], directory)) %}
+            {% for file in os.listdir(os.path.join(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory)) %}
                 <li>{{ file }}</li>
             {% endfor %}
         </ul>

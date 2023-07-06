@@ -14,8 +14,8 @@ temp_grafana_plugins_dir = runtime_config.temp_grafana_plugins_dir
 @app.route('/index', methods = ['GET', 'POST'])
 def index():
     logging.info('Accessed main dashboard page')
-    grafana_plugins_directory = app.config['GRAFANA_PLUGINS_DIR']
-    directories = [ name for name in os.listdir(grafana_plugins_directory) if os.path.isdir(os.path.join(grafana_plugins_directory, name)) ]  # Get only dirs
+    grafana_plugins_repo_directory = app.config['GRAFANA_PLUGINS_REPO_DIR']
+    directories = [ name for name in os.listdir(grafana_plugins_repo_directory) if os.path.isdir(os.path.join(grafana_plugins_repo_directory, name)) ]  # Get only dirs
     return render_template('index.html', 
                             directories=directories,
                             os=os,
@@ -24,8 +24,8 @@ def index():
 @app.route('/plugins', methods = ['GET'])
 def plugins_page():
     logging.info('Accessed plugins page')
-    grafana_plugins_directory = app.config['GRAFANA_PLUGINS_DIR']
-    directories = [ name for name in os.listdir(grafana_plugins_directory) if os.path.isdir(os.path.join(grafana_plugins_directory, name)) ]  # Get only dirs
+    grafana_plugins_repo_directory = app.config['GRAFANA_PLUGINS_REPO_DIR']
+    directories = [ name for name in os.listdir(grafana_plugins_repo_directory) if os.path.isdir(os.path.join(grafana_plugins_repo_directory, name)) ]  # Get only dirs
     return render_template('plugins_page.html', 
                             directories=directories,
                             os=os,
@@ -34,7 +34,7 @@ def plugins_page():
 # @app.route('/create_directory', methods=['POST'])
 # def create_directory():
 #     directory_name = runtime_config.repo_name
-#     directory_path = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name)
+#     directory_path = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory_name)
 #     os.makedirs(directory_path, exist_ok=True)
 #     logging.info(f'Created directory: {directory_name}')
 #     return redirect(url_for('index'))
@@ -51,7 +51,7 @@ def stream():
     
 @app.route('/remove/<path:file_or_dir_path>', methods=['GET'])
 def remove_file_or_dir(file_or_dir_path):
-    path_to_remove = join_path(app.config['GRAFANA_PLUGINS_DIR'], file_or_dir_path)
+    path_to_remove = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], file_or_dir_path)
     logging.info(f'Removing: {path_to_remove}')
     if not helpers.file_exists(path_to_remove):
         return f'Error: File or directory not found: {path_to_remove}'
@@ -70,7 +70,7 @@ def remove_file_or_dir(file_or_dir_path):
 @app.route('/remove_directory', methods=['POST'])
 def remove_directory():
     directory_name = runtime_config.repo_name
-    directory_path = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name)
+    directory_path = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory_name)
     helpers.remove_directory_with_content(directory_path)
     logging.info(f'Removed directory: {directory_name}')
     return redirect(url_for('index'))
@@ -79,7 +79,7 @@ def remove_directory():
 def remove_file():
     directory_name = runtime_config.repo_name
     file_name = request.form['file_name']
-    file_path = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name, file_name)
+    file_path = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory_name, file_name)
     helpers.delete_file(file_path)
     logging.info(f'Removed file: {file_name} from directory: {directory_name}')
     return redirect(url_for('index'))
@@ -88,7 +88,7 @@ def remove_file():
 def download_file(path):
     directory = os.path.dirname(path)
     filename = os.path.basename(path)
-    return send_from_directory(os.path.join(app.config['GRAFANA_PLUGINS_DIR'], directory), filename, as_attachment=True)
+    return send_from_directory(os.path.join(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory), filename, as_attachment=True)
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -110,7 +110,7 @@ def upload():
     helpers.validate_uploaded_zip_file(temp_uploaded_file_path)
     
     
-    directory_path       = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name)
+    directory_path       = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory_name)
     copied_zip_file_path = helpers.copy_zip_file_to_plugins_dir(temp_uploaded_file_path, directory_path)
     file_path            = copied_zip_file_path
     

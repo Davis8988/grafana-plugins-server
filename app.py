@@ -28,8 +28,9 @@ runtime_config.temp_grafana_plugins_dir = temp_grafana_plugins_dir
 
 
 # Configure app settings
-app.config['GRAFANA_PLUGINS_DIR'] = grafana_plugins_dir
-app.config['ALLOWED_EXTENSIONS']  = {'zip'}
+app.config['GRAFANA_PLUGINS_DIR']      = grafana_plugins_dir
+app.config['GRAFANA_PLUGINS_REPO_DIR'] = grafana_plugins_repo_dir
+app.config['ALLOWED_EXTENSIONS']       = {'zip'}
 
 # Prepare env:
 helpers.prepare_logging_dir(log_file_path)
