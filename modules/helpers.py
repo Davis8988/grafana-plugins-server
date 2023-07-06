@@ -236,10 +236,19 @@ def read_plugin_details_from_plugin_json_file(plugin_json_file_path):
     grafana_plugin_obj = grafana_plugin_class.GrafanaPlugin(**json_data) # Create GrafanaPlugin instance
     grafana_plugin_class.validate_grafana_plugin_class_obj(grafana_plugin_obj)
     return grafana_plugin_obj
-    
-    
+
+def list_first_level_dirs_under_path(dir_path):
+    logging.info("Listing 1st level directories under: {dir_path} ")
+    try:
+        return [ name for name in os.listdir(dir_path) if os.path.isdir(os.path.join(dir_path, name)) ]  # Get only dirs
+    except Exception as e:
+        logging.info(f'Failed to list 1st level directories under path: {dir_path} ')
+        logging.error(f'Error while attempting to list 1st level directories under path: {str(e)}')
+        raise e
 
 def calculate_uploaded_plugins_summary_json_file():
     logging.info('Calculating uploaded plugins summary json file')
-    
+    for grafana_plugin_dir in runtime_config.grafana_plugins_repo_dir:
+        
+    grafana_plugin_obj = read_plugin_details_from_plugin_json_file()
     pass
