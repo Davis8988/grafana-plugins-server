@@ -1,6 +1,6 @@
 from modules import runtime_config
 from modules import helpers
-from flask import render_template, request, redirect, url_for, send_from_directory, Response
+from flask import render_template, request, redirect, url_for, send_from_directory, Response, jsonify
 import os
 from os.path import join as join_path
 import zipfile
@@ -32,6 +32,12 @@ def plugins_page():
                             directories=directories,
                             os=os,
                             app=app)
+
+@app.route('/plugins/repo', methods = ['GET'])
+def plugins_repo_page():
+    logging.info('Accessed plugins/repo page')
+    json_data = helpers.read_json_file(runtime_config.grafana_plugins_summary_json_file)
+    return jsonify(json_data)
 
 # @app.route('/create_directory', methods=['POST'])
 # def create_directory():
