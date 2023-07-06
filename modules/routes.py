@@ -116,7 +116,7 @@ def upload():
     file_path             = copied_zip_file_path
     
     try:
-        helpers.copy_file(plugin_json_file_path, plugin_zip_target_dir)
+        helpers.copy_file(plugin_json_file_path, join_path(plugin_zip_target_dir, "plugin.json"))
         logging.info(f'Success uploading and extracting file: {uploaded_file.filename}')
         logging.info(f'Cleaning uploaded and temp files..')
         helpers.delete_file(temp_uploaded_file_path)
