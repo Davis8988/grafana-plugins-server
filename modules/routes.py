@@ -31,7 +31,7 @@ def plugins_page():
 
 # @app.route('/create_directory', methods=['POST'])
 # def create_directory():
-#     directory_name = request.form['directory_name']
+#     directory_name = runtime_config.repo_name
 #     directory_path = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name)
 #     os.makedirs(directory_path, exist_ok=True)
 #     logging.info(f'Created directory: {directory_name}')
@@ -67,7 +67,7 @@ def remove_file_or_dir(file_or_dir_path):
 
 @app.route('/remove_directory', methods=['POST'])
 def remove_directory():
-    directory_name = request.form['directory_name']
+    directory_name = runtime_config.repo_name
     directory_path = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name)
     helpers.remove_directory_with_content(directory_path)
     logging.info(f'Removed directory: {directory_name}')
@@ -75,7 +75,7 @@ def remove_directory():
 
 @app.route('/remove_file', methods=['POST'])
 def remove_file():
-    directory_name = request.form['directory_name']
+    directory_name = runtime_config.repo_name
     file_name = request.form['file_name']
     file_path = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name, file_name)
     helpers.delete_file(file_path)
@@ -90,7 +90,7 @@ def download_file(path):
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    directory_name = request.form.get('directory', None)
+    directory_name = runtime_config.repo_name
     file = request.files['file']
     if not directory_name:
         error_message = f'Error uploading: "{file.filename}" - Invalid directory: "{directory_name}". Please choose a directory from the list or create one if non is existing..'
