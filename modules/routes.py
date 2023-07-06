@@ -86,16 +86,16 @@ def download_file(path):
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    file = request.files['file']
-    if not file or not helpers.allowed_file(file.filename):
-        error_message = f'Error uploading: "{file.filename}" - Invalid file or file type not allowed. Only "*.zip" files are allowed'
+    uploaded_file = request.files['file']
+    if not uploaded_file or not helpers.allowed_file(uploaded_file.filename):
+        error_message = f'Error uploading: "{uploaded_file.filename}" - Invalid file or file type not allowed. Only "*.zip" files are allowed'
         logging.error(error_message)
         return error_message
 
     # Save the uploaded file into a temp dir first..
     extract_file_name = helpers.get_file_name_from_path(temp_uploaded_file_path)
     temp_plugin_dir = join_path(temp_grafana_plugins_dir, extract_file_name)
-    temp_uploaded_file_path = helpers.save_file_in_dir(file, temp_plugin_dir)
+    temp_uploaded_file_path = helpers.save_file_in_dir(uploaded_file, temp_plugin_dir)
     
     # Validate uploaded zip file:
     helpers.validate_uploaded_zip_file(temp_uploaded_file_path)
@@ -118,7 +118,7 @@ def upload():
     
     try:
         helpers.extract_file_from_zip_to_dir(file_path, plugin_json_file_path, plugin_zip_target_dir)
-        logging.info(f'Success uploading and extracting file: {file.filename}')
+        logging.info(f'Success uploading and extracting file: {uploaded_file.filename}')
     except Exception as e:
         # Remove the uploaded file
         os.remove(file_path)
