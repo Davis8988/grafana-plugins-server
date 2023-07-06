@@ -261,4 +261,4 @@ def calculate_uploaded_plugins_summary_json_file():
         return
         
     grafana_plugin_obj = read_plugin_details_from_plugin_json_file()
-    pass
+    
