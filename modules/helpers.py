@@ -232,6 +232,8 @@ def read_plugin_details_from_plugin_json_file(plugin_json_file_path):
     logging.info(json_data)
     logging.info("OK")
     logging.info("Parsing json data into a GrafanaPlugin class obj")
+    # Create GrafanaPlugin instance
+    plugin = GrafanaPlugin(**json_data)
     
     
 
