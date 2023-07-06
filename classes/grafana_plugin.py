@@ -16,5 +16,6 @@ def validate_grafana_plugin_class_obj(grafana_plugin):
     for attr_name in required_attributes:
         attr_value = getattr(grafana_plugin, attr_name)
         if attr_value is None or not attr_value.strip():
-            return False
-    return True
+            err_msg = f"Grafana plugin class obj is missing or has an empty value attribute: '{attr_name}'"
+            logging.error(err_msg)
+            raise Exception(err_msg)

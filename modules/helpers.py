@@ -1,4 +1,4 @@
-from classes import grafana_plugin
+from classes import grafana_plugin as grafana_plugin_class
 from modules import runtime_config
 from flask import Response
 import os
@@ -233,8 +233,11 @@ def read_plugin_details_from_plugin_json_file(plugin_json_file_path):
     logging.info("OK")
     logging.info("Parsing json data into a GrafanaPlugin class obj")
     
-    grafana_plugin = grafana_plugin.GrafanaPlugin(**json_data) # Create GrafanaPlugin instance
-    
+    grafana_plugin_obj = grafana_plugin_class.GrafanaPlugin(**json_data) # Create GrafanaPlugin instance
+    if not grafana_plugin_class.validate_grafana_plugin_class_obj(grafana_plugin_obj):
+        err_msg = f"Validate of grafana plugin class obj failed"
+        logging.error(err_msg)
+        raise Exception(err_msg)
     return grafana_plugin
     
     
