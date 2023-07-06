@@ -246,6 +246,11 @@ def list_first_level_dirs_under_path(dir_path):
         logging.error(f'Error while attempting to list 1st level directories under path: {str(e)}')
         raise e
 
+def construct_plugins_summary_json_file_content(grafana_plugins_obj_arr):
+    logging.info('Constructing all plugins summary json file content')
+    plugins_summary_json_file_content = ""
+    
+
 def calculate_uploaded_plugins_summary_json_file():
     logging.info('Calculating uploaded plugins summary json file')
     all_repo_dirs = list_first_level_dirs_under_path(runtime_config.grafana_plugins_repo_dir)
@@ -263,5 +268,10 @@ def calculate_uploaded_plugins_summary_json_file():
     for grafana_plugin_json_file in all_plugins_json_files_arr:
         grafana_plugin_obj = read_plugin_details_from_plugin_json_file(grafana_plugin_json_file)  # Also validates it..
         grafana_plugins_obj_arr.append(grafana_plugin_obj)
+    if len(grafana_plugins_obj_arr) == 0:
+        err_msg = f"Failed to read any of 'plugin.json' files found ({len(all_plugins_json_files_arr)}) in 1st level content of all directories under: {runtime_config.grafana_plugins_repo_dir}"
+        logging.error(err_msg)
+        raise Exception(err_msg)
         
+    return
     
