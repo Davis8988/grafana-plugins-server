@@ -97,6 +97,8 @@ def upload():
     
     # Validate uploaded zip file:
     helpers.validate_uploaded_zip_file(temp_uploaded_file_path)
+    
+    # Extract the zip file to temp dir:
     extract_file_name = helpers.get_file_name_from_path(temp_uploaded_file_path)
     extract_zip_file_target_dir = join_path(temp_grafana_plugins_dir, extract_file_name)
     helpers.extract_zip_to_dir(temp_uploaded_file_path, extract_zip_file_target_dir)
