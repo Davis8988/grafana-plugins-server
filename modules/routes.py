@@ -14,7 +14,8 @@ temp_grafana_plugins_dir = runtime_config.temp_grafana_plugins_dir
 @app.route('/index', methods = ['GET', 'POST'])
 def index():
     logging.info('Accessed main dashboard page')
-    directories = os.listdir(app.config['GRAFANA_PLUGINS_DIR'])
+    grafana_plugins_directory = app.config['GRAFANA_PLUGINS_DIR']
+    directories = [ name for name in os.listdir(grafana_plugins_directory) if os.path.isdir(os.path.join(grafana_plugins_directory, name)) ]  # Get only dirs
     return render_template('index.html', 
                             directories=directories,
                             os=os,

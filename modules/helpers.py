@@ -203,3 +203,8 @@ def remove_directory_with_content(dir_path):
             logging.error(f'{str(e)}')
             raise Exception(f'Error: Failed to remove the directory: {dir_path}')
         logging.info(f'Success removing the directory with its content: {dir_path}')
+
+def calculate_uploaded_plugins_summary_json_file():
+    logging.info('Calculating uploaded plugins summary json file')
+    
+    pass
