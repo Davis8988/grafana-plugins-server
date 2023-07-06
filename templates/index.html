@@ -46,12 +46,6 @@
 <body>
     <h1>Grafana Plugins Dashboard</h1>
 
-    <h2>Create New Directory</h2>
-    <form method="POST" action="{{ url_for('create_directory') }}">
-        <input type="text" name="directory_name" placeholder="Directory Name">
-        <input type="submit" value="Create">
-    </form>
-
     <h2>Upload Plugin Zip</h2>
     <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
         <select name="directory">

@@ -55,5 +55,6 @@ if __name__ == '__main__':
     try:
         app.run(debug=True, port=server_port, host=server_host) 
     except Exception as e:
+        logging.info(f'An exception has occurred during execution of the plugins server')
         logging.error(f'{str(e)}')
         raise e

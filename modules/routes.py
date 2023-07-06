@@ -29,13 +29,13 @@ def plugins_page():
                             os=os,
                             app=app)
 
-@app.route('/create_directory', methods=['POST'])
-def create_directory():
-    directory_name = request.form['directory_name']
-    directory_path = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name)
-    os.makedirs(directory_path, exist_ok=True)
-    logging.info(f'Created directory: {directory_name}')
-    return redirect(url_for('index'))
+# @app.route('/create_directory', methods=['POST'])
+# def create_directory():
+#     directory_name = request.form['directory_name']
+#     directory_path = join_path(app.config['GRAFANA_PLUGINS_DIR'], directory_name)
+#     os.makedirs(directory_path, exist_ok=True)
+#     logging.info(f'Created directory: {directory_name}')
+#     return redirect(url_for('index'))
 
 
 
