@@ -128,6 +128,7 @@ def get_plugins_json_file_path_from_dir_path(dir_path):
     for root, dirs, files in os.walk(dir_path):
         if file_name in files:
             return os.path.join(root, file_name)
+    logging.warning(f'Failed to find "plugin.json" file under: {dir_path}')
 
 def get_plugins_json_file_path_from_zip_file(zip_file):
     plugin_json_file_path = None
