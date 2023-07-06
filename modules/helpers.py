@@ -211,6 +211,7 @@ def read_json_file(json_file_path):
         logging.error(f'Missing or unreachable json file: {json_file_path} - cannot read it')
         raise Exception(f'Missing or unreachable json file: {json_file_path} - cannot read it')
     # Read JSON file
+    json_data = None
     try:
         with open(json_file_path) as file:
             json_data = json.load(file)
