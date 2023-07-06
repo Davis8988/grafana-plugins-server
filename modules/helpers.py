@@ -1,3 +1,4 @@
+from classes import GrafanaPlugin
 from modules import runtime_config
 from flask import Response
 import os
