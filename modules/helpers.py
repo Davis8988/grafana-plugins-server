@@ -246,10 +246,10 @@ def list_first_level_dirs_under_path(dir_path):
         logging.error(f'Error while attempting to list 1st level directories under path: {str(e)}')
         raise e
 
-def construct_plugins_summary_json_file_content(grafana_plugins_obj_arr):
+def construct_plugins_summary_json_file_data(grafana_plugins_obj_arr):
     logging.info('Constructing all plugins summary json file content')
     # Construct the JSON structure
-    plugins_summary_json = {
+    plugins_summary_json_file_data = {
         "plugins": []
     }
 
@@ -263,8 +263,8 @@ def construct_plugins_summary_json_file_content(grafana_plugins_obj_arr):
                 }
             ]
         }
-        plugins_summary_json["plugins"].append(plugin_data)
-    return plugins_summary_json
+        plugins_summary_json_file_data["plugins"].append(plugin_data)
+    return plugins_summary_json_file_data
     
 
 def calculate_uploaded_plugins_summary_json_file():
