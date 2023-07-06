@@ -325,7 +325,7 @@ def construct_plugins_summary_json_file_data():
                 }
             )
         plugin_json_data = {
-            "id": plugin_obj.id,
+            "id": parsed_plugin_id,
             "type": plugin_obj.type,
             "versions" : versions_arr
         }
