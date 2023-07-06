@@ -291,18 +291,31 @@ def construct_plugins_summary_json_file_data(grafana_plugins_obj_arr):
         "plugins": []
     }
 
-    found_plugins_map = {}
+    parsed_plugins_map = {}
     for plugin_obj in grafana_plugins_obj_arr:
-        plugin_data = {
+        if not parsed_plugins_map[plugin_obj.id]:
+            parsed_plugins_map[plugin_obj.id] = {
+                'plugin_obj'         : plugin_obj,
+                'plugin_versions_map': {}
+            }
+        plugin_versions_map = parsed_plugins_map[plugin_obj.id].get('plugin_versions_map')
+        plugin_versions_map[plugin_obj.version] = plugin_obj.version
+    
+    for parsed_plugin_id, parsed_plugin_versions_map in parsed_plugins_map.items():
+        plugin_obj = parsed_plugin_versions_map['plugin_obj']
+        versions_arr = []
+        for version in plugin_versions_map.keys():
+            versions_arr.append(
+                {
+                    "version": version
+                }
+            )
+        plugin_json_data = {
             "id": plugin_obj.id,
             "type": plugin_obj.type,
-            "versions": [
-                {
-                    "version": plugin_obj.version
-                }
-            ]
+            "versions" : versions_arr
         }
-        plugins_summary_json_file_data["plugins"].append(plugin_data)
+        plugins_summary_json_file_data["plugins"].append(plugin_json_data)
     return plugins_summary_json_file_data
     
 
