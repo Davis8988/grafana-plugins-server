@@ -6,6 +6,7 @@ from os.path import join as join_path
 import zipfile
 import logging
 import shutil
+import json
 
 def get_persistent_temp_dir():
     temp_dir = '/tmp' # Unix-like
@@ -217,6 +218,7 @@ def read_json_file(json_file_path):
         logging.error(f'Error while attempting to read json file: {json_file_path}')
         logging.error(str(e))
         raise e
+    return json_data
         
         
 def read_plugin_details_from_plugin_json_file(plugin_json_file_path):
