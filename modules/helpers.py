@@ -122,6 +122,13 @@ def print_zip_file_containing_files(zip_file):
         for x in file_list:
             logging.info(f' - {x}')
 
+def get_plugins_json_file_path_from_dir_path(dir_path):
+    logging.info(f'Searching for "plugin.json" file under: {dir_path}')
+    file_name = "plugin.json"
+    for root, dirs, files in os.walk(dir_path):
+        if file_name in files:
+            return os.path.join(root, file_name)
+
 def get_plugins_json_file_path_from_zip_file(zip_file):
     plugin_json_file_path = None
     with zipfile.ZipFile(zip_file, 'r') as zip_ref:
