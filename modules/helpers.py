@@ -1,4 +1,5 @@
 from classes import grafana_plugin as grafana_plugin_class
+from distutils.version import StrictVersion
 from modules import runtime_config
 from flask import Response
 import os
@@ -317,13 +318,8 @@ def construct_plugins_summary_json_file_data():
     
     for parsed_plugin_id, parsed_plugin_versions_map in parsed_plugins_map.items():
         plugin_obj = parsed_plugin_versions_map['plugin_obj']
-        versions_arr = []
-        for version in plugin_versions_map.keys():
-            versions_arr.append(
-                {
-                    "version": version
-                }
-            )
+        versions_arr = [version for version in plugin_versions_map.keys()]
+        versions_arr.sort(key=StrictVersion)
         plugin_json_data = {
             "id": parsed_plugin_id,
             "type": plugin_obj.type,
