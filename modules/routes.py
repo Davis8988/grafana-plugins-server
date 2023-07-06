@@ -16,6 +16,8 @@ def index():
     logging.info('Accessed main dashboard page')
     grafana_plugins_repo_directory = app.config['GRAFANA_PLUGINS_REPO_DIR']
     directories = [ name for name in os.listdir(grafana_plugins_repo_directory) if os.path.isdir(os.path.join(grafana_plugins_repo_directory, name)) ]  # Get only dirs
+    for x in directories:
+        logging.info(f"Dir: {x}")
     return render_template('index.html', 
                             directories=directories,
                             os=os,
@@ -67,19 +69,11 @@ def remove_file_or_dir(file_or_dir_path):
     
     return redirect(url_for('index'))
 
-@app.route('/remove_directory', methods=['POST'])
-def remove_directory():
-    directory_name = runtime_config.repo_name
-    directory_path = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory_name)
-    helpers.remove_directory_with_content(directory_path)
-    logging.info(f'Removed directory: {directory_name}')
-    return redirect(url_for('index'))
-
 @app.route('/remove_file', methods=['POST'])
 def remove_file():
     directory_name = runtime_config.repo_name
     file_name = request.form['file_name']
-    file_path = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory_name, file_name)
+    file_path = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], file_name)
     helpers.delete_file(file_path)
     logging.info(f'Removed file: {file_name} from directory: {directory_name}')
     return redirect(url_for('index'))
@@ -92,12 +86,7 @@ def download_file(path):
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    directory_name = runtime_config.repo_name
     file = request.files['file']
-    if not directory_name:
-        error_message = f'Error uploading: "{file.filename}" - Invalid directory: "{directory_name}". Please choose a directory from the list or create one if non is existing..'
-        logging.error(error_message)
-        return error_message
     if not file or not helpers.allowed_file(file.filename):
         error_message = f'Error uploading: "{file.filename}" - Invalid file or file type not allowed. Only "*.zip" files are allowed'
         logging.error(error_message)
@@ -110,7 +99,7 @@ def upload():
     helpers.validate_uploaded_zip_file(temp_uploaded_file_path)
     
     
-    directory_path       = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory_name)
+    directory_path       = app.config['GRAFANA_PLUGINS_REPO_DIR']
     copied_zip_file_path = helpers.copy_zip_file_to_plugins_dir(temp_uploaded_file_path, directory_path)
     file_path            = copied_zip_file_path
     
