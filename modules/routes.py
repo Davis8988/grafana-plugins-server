@@ -118,6 +118,7 @@ def upload():
     try:
         helpers.copy_file(plugin_json_file_path, join_path(plugin_zip_target_dir, "plugin.json"))
         logging.info(f'Success uploading and extracting file: {uploaded_file.filename}')
+        helpers.calculate_uploaded_plugins_summary_json_file()
         logging.info(f'Cleaning uploaded and temp files..')
         helpers.delete_file(temp_uploaded_file_path)
         helpers.remove_directory_with_content(temp_plugin_dir)
