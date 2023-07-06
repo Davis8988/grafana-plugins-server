@@ -319,7 +319,7 @@ def construct_plugins_summary_json_file_data():
     for parsed_plugin_id, parsed_plugin_versions_map in parsed_plugins_map.items():
         plugin_obj = parsed_plugin_versions_map['plugin_obj']
         versions_arr = [version for version in plugin_versions_map.keys()]
-        versions_arr.sort(key=StrictVersion)
+        versions_arr.sort(key=StrictVersion, reverse=True)  # Need to use reverse here since the lowest value is first on normal sorting..
         versions_arr = [ {"version" : version } for version in versions_arr ]  # Convert format of each item to: { "version" : version }
         plugin_json_data = {
             "id": parsed_plugin_id,
