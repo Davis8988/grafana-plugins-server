@@ -259,6 +259,9 @@ def calculate_uploaded_plugins_summary_json_file():
         logging.warning(f"No 'plugin.json' files found in 1st level content of all directories under: {runtime_config.grafana_plugins_repo_dir}")
         logging.warning("Cannot calculate plugins summary json file since no plugin.json files were found")
         return
+    grafana_plugins_obj_arr = []
+    for grafana_plugin_json_file in all_plugins_json_files_arr:
+        grafana_plugin_obj = read_plugin_details_from_plugin_json_file()
+        grafana_plugins_obj_arr.append(grafana_plugin_obj)
         
-    grafana_plugin_obj = read_plugin_details_from_plugin_json_file()
     
