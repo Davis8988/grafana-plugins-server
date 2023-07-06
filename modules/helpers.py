@@ -284,12 +284,26 @@ def list_first_level_dirs_under_path(dir_path):
         logging.error(f'Error while attempting to list 1st level directories under path: {str(e)}')
         raise e
 
-def construct_plugins_summary_json_file_data(grafana_plugins_obj_arr):
+def construct_plugins_summary_json_file_data():
     logging.info('Constructing all plugins summary json file content')
     # Construct the JSON structure
     plugins_summary_json_file_data = {
         "plugins": []
     }
+    
+    all_plugins_json_files_arr = get_all_files_by_name_under_dir_path('plugin.json', runtime_config.grafana_plugins_dir)
+    if len(all_plugins_json_files_arr) == 0:
+        logging.warning(f"No 'plugin.json' files found in 1st level content of all directories under: {runtime_config.grafana_plugins_dir}")
+        logging.warning("Cannot calculate plugins summary json file since no plugin.json files were found")
+        return plugins_summary_json_file_data
+    grafana_plugins_obj_arr = []
+    for grafana_plugin_json_file in all_plugins_json_files_arr:
+        grafana_plugin_obj = read_plugin_details_from_plugin_json_file(grafana_plugin_json_file)  # Also validates it..
+        grafana_plugins_obj_arr.append(grafana_plugin_obj)
+    if len(grafana_plugins_obj_arr) == 0:
+        err_msg = f"Failed to read any of 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"
+        logging.error(err_msg)
+        return plugins_summary_json_file_data
 
     parsed_plugins_map = {}
     for plugin_obj in grafana_plugins_obj_arr:
@@ -332,20 +346,7 @@ def write_json_file(json_data, json_file_path):
 
 def calculate_uploaded_plugins_summary_json_file():
     logging.info('Calculating uploaded plugins summary json file')
-    all_plugins_json_files_arr = get_all_files_by_name_under_dir_path('plugin.json', runtime_config.grafana_plugins_dir)
-    if len(all_plugins_json_files_arr) == 0:
-        logging.warning(f"No 'plugin.json' files found in 1st level content of all directories under: {runtime_config.grafana_plugins_dir}")
-        logging.warning("Cannot calculate plugins summary json file since no plugin.json files were found")
-        return
-    grafana_plugins_obj_arr = []
-    for grafana_plugin_json_file in all_plugins_json_files_arr:
-        grafana_plugin_obj = read_plugin_details_from_plugin_json_file(grafana_plugin_json_file)  # Also validates it..
-        grafana_plugins_obj_arr.append(grafana_plugin_obj)
-    if len(grafana_plugins_obj_arr) == 0:
-        err_msg = f"Failed to read any of 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"
-        logging.error(err_msg)
-        raise Exception(err_msg)
-    plugins_summary_json_file_content = construct_plugins_summary_json_file_data(grafana_plugins_obj_arr)
+    plugins_summary_json_file_content = construct_plugins_summary_json_file_data()
     if not plugins_summary_json_file_content:
         err_msg = f"Failed to construct plugins summary json file content from all 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"
         logging.error(err_msg)
