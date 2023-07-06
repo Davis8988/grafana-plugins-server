@@ -5,8 +5,11 @@ class GrafanaPlugin:
         self.name         = kwargs.get('name', None)
         self.type         = kwargs.get('type', None)
         self.id           = kwargs.get('id', None)
-        self.description  = kwargs.get('description', None)
         self.version      = kwargs.get('version', None)
+        self.description  = None
+        info_obj = kwargs.get('info', None)
+        if info_obj:
+            self.description  = info_obj.get('description', None)
         # self.dependencies = kwargs.get('dependencies', None)
 
 
