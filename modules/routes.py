@@ -103,6 +103,8 @@ def upload():
     extract_zip_file_target_dir = join_path(temp_grafana_plugins_dir, extract_file_name)
     helpers.extract_zip_to_dir(temp_uploaded_file_path, extract_zip_file_target_dir)
     
+    # Read plugin details:
+    grafana_plugin_obj = 
     
     directory_path       = app.config['GRAFANA_PLUGINS_REPO_DIR']
     copied_zip_file_path = helpers.copy_zip_file_to_plugins_dir(temp_uploaded_file_path, directory_path)

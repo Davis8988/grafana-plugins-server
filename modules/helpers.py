@@ -310,7 +310,7 @@ def calculate_uploaded_plugins_summary_json_file():
         err_msg = f"Failed to read any of 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_repo_dir}"
         logging.error(err_msg)
         raise Exception(err_msg)
-    plugins_summary_json_file_content = construct_plugins_summary_json_file_content(grafana_plugins_obj_arr)
+    plugins_summary_json_file_content = construct_plugins_summary_json_file_data(grafana_plugins_obj_arr)
     if not plugins_summary_json_file_content:
         err_msg = f"Failed to construct plugins summary json file content from all 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_repo_dir}"
         logging.error(err_msg)
