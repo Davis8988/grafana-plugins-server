@@ -261,7 +261,7 @@ def calculate_uploaded_plugins_summary_json_file():
         return
     grafana_plugins_obj_arr = []
     for grafana_plugin_json_file in all_plugins_json_files_arr:
-        grafana_plugin_obj = read_plugin_details_from_plugin_json_file()
+        grafana_plugin_obj = read_plugin_details_from_plugin_json_file(grafana_plugin_json_file)  # Also validates it..
         grafana_plugins_obj_arr.append(grafana_plugin_obj)
         
     
