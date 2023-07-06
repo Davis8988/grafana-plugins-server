@@ -319,7 +319,7 @@ def construct_plugins_summary_json_file_data(grafana_plugins_obj_arr):
     return plugins_summary_json_file_data
     
 
-def write_json_file(json_file_path, json_data):
+def write_json_file(json_data, json_file_path):
     # Write JSON data to a file
     logging.info(f'Writing json data to: {json_file_path}')
     delete_file(json_file_path)
@@ -350,5 +350,6 @@ def calculate_uploaded_plugins_summary_json_file():
         err_msg = f"Failed to construct plugins summary json file content from all 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"
         logging.error(err_msg)
         raise Exception(err_msg)
+    write_json_file(plugins_summary_json_file_content, runtime_config.grafana_plugins_summary_json_file)
     return
     
