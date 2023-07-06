@@ -229,6 +229,7 @@ def read_plugin_details_from_plugin_json_file(plugin_json_file_path):
         err_msg = f"Read json data from file: {plugin_json_file_path} is of Null/empty value ''"
         logging.error(err_msg)
         raise Exception(err_msg)
+    logging.info(json_data)
     
 
 def calculate_uploaded_plugins_summary_json_file():
