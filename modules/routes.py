@@ -107,12 +107,12 @@ def upload():
     plugin_json_file_path = join_path(extract_zip_file_target_dir, "plugin.json")
     grafana_plugin_obj = helpers.read_plugin_details_from_plugin_json_file(plugin_json_file_path)  # When getting back an object from this method we know the object is validated - it has attributes: 'name' and 'version'
     
-    plugin_id          = grafana_plugin_obj.id
-    plugin_version       = grafana_plugin_obj.version
-    grafana_plugins_dir  = app.config['GRAFANA_PLUGINS_DIR']
-    plugin_zip_file_target = join_path(grafana_plugins_dir, plugin_id, "versions", plugin_version)
-    copied_zip_file_path = helpers.copy_zip_file_to_plugins_dir(temp_uploaded_file_path, plugin_zip_file_target)
-    file_path            = copied_zip_file_path
+    plugin_id             = grafana_plugin_obj.id
+    plugin_version        = grafana_plugin_obj.version
+    grafana_plugins_dir   = app.config['GRAFANA_PLUGINS_DIR']
+    plugin_zip_target_dir = join_path(grafana_plugins_dir, plugin_id, "versions", plugin_version)
+    copied_zip_file_path  = helpers.copy_zip_file_to_plugins_dir(temp_uploaded_file_path, plugin_zip_target_dir)
+    file_path             = copied_zip_file_path
     
     plugin_json_file_path = helpers.get_plugins_json_file_path_from_zip_file(file_path)
     
