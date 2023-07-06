@@ -137,6 +137,9 @@ def get_plugins_json_file_path_from_zip_file(zip_file):
 def file_exists(file_path):
     return os.path.exists(file_path)
 
+def dir_exists(dir_path):
+    return os.path.exists(dir_path)
+
 def delete_file(file_path):
     if not file_exists(file_path):
         return
@@ -186,6 +189,7 @@ def get_file_name_from_path(file_path):
 
 def extract_zip_to_dir(src_zip_file, dest_dir_to_extract_to):
     logging.info(f'Extracting zip file: {src_zip_file} to: {dest_dir_to_extract_to}')
+    remove_directory_with_content(dest_dir_to_extract_to)
     try:
         with zipfile.ZipFile(src_zip_file, 'r') as zip_ref:
             zip_ref.extractall(dest_dir_to_extract_to)
@@ -205,22 +209,23 @@ def extract_file_from_zip_to_dir(src_zip_file, file_to_extract, dest_dir_to_extr
     
 
 def remove_directory_with_content(dir_path):
+    if not dir_exists(dir_path):
+        return
     logging.info(f'Removing directory with its content: {dir_path}')
-    if os.path.exists(dir_path):
-        try:
-            for root, dirs, files in os.walk(dir_path):
-                for f in files:
-                    os.unlink(os.path.join(root, f))
-                for d in dirs:
-                    shutil.rmtree(os.path.join(root, d))
-            shutil.rmtree(dir_path)
-            if os.path.exists(dir_path):
-                raise Exception(f'Even after removing the directory: "{dir_path}" it still exists')
-        except Exception as e:
-            logging.error(f'Error while removing the directory: {dir_path}')
-            logging.error(f'{str(e)}')
-            raise Exception(f'Error: Failed to remove the directory: {dir_path}')
-        logging.info(f'Success removing the directory with its content: {dir_path}')
+    try:
+        for root, dirs, files in os.walk(dir_path):
+            for f in files:
+                os.unlink(os.path.join(root, f))
+            for d in dirs:
+                shutil.rmtree(os.path.join(root, d))
+        shutil.rmtree(dir_path)
+        if os.path.exists(dir_path):
+            raise Exception(f'Even after removing the directory: "{dir_path}" it still exists')
+    except Exception as e:
+        logging.error(f'Error while removing the directory: {dir_path}')
+        logging.error(f'{str(e)}')
+        raise Exception(f'Error: Failed to remove the directory: {dir_path}')
+    logging.info(f'Success removing the directory with its content: {dir_path}')
 
 def read_json_file(json_file_path):
     logging.info(f'Reading json file: {json_file_path}')

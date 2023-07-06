@@ -97,7 +97,9 @@ def upload():
     
     # Validate uploaded zip file:
     helpers.validate_uploaded_zip_file(temp_uploaded_file_path)
-    helpers.extract_zip_to_dir(file_path, plugin_json_file_path, directory_path)
+    extract_file_name = helpers.get_file_name_from_path(temp_uploaded_file_path)
+    extract_zip_file_target_dir = join_path(temp_grafana_plugins_dir, extract_file_name)
+    helpers.extract_zip_to_dir(temp_uploaded_file_path, extract_zip_file_target_dir)
     
     
     directory_path       = app.config['GRAFANA_PLUGINS_REPO_DIR']
