@@ -122,8 +122,7 @@ def upload():
         helpers.delete_file(temp_uploaded_file_path)
         helpers.remove_directory_with_content(temp_plugin_dir)
     except Exception as e:
-        # Remove the uploaded file
-        os.remove(file_path)
+        helpers.delete_file(file_path)
         helpers.remove_directory_with_content(temp_plugin_dir)
         logging.error(f'Error while uploading file: {str(e)}')
 
