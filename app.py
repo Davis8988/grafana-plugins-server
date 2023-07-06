@@ -17,6 +17,7 @@ server_host              = os.environ.get('SERVER_HOST',      "0.0.0.0")
 log_file_path            = os.environ.get('LOG_FILE',            join_path(script_directory, "logs", "app.log"))
 grafana_plugins_dir      = os.environ.get('GRAFANA_PLUGINS_DIR', join_path(script_directory, "grafana_plugins"))
 grafana_plugins_repo_dir = os.environ.get('GRAFANA_PLUGINS_REPO_DIR', join_path(grafana_plugins_dir, "repo"))
+grafana_plugins_summary_json_file = os.environ.get('GRAFANA_PLUGINS_SUMMARY_JSON_FILE', join_path(grafana_plugins_dir, "plugins_summary.json"))
 temp_grafana_plugins_dir = join_path(os.environ.get('TEMP_GRAFANA_PLUGINS_DIR', helpers.get_persistent_temp_dir()), "grafana_plguins")
 
 runtime_config.server_port              = server_port
