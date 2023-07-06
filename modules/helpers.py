@@ -248,7 +248,23 @@ def list_first_level_dirs_under_path(dir_path):
 
 def construct_plugins_summary_json_file_content(grafana_plugins_obj_arr):
     logging.info('Constructing all plugins summary json file content')
-    plugins_summary_json_file_content = ""
+    # Construct the JSON structure
+    plugins_summary_json = {
+        "plugins": []
+    }
+
+    for plugin_obj in grafana_plugins_obj_arr:
+        plugin_data = {
+            "id": plugin_obj.id,
+            "type": plugin_obj.type,
+            "versions": [
+                {
+                    "version": plugin_obj.version
+                }
+            ]
+        }
+        plugins_summary_json["plugins"].append(plugin_data)
+    return plugins_summary_json
     
 
 def calculate_uploaded_plugins_summary_json_file():
