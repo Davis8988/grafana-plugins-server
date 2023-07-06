@@ -12,10 +12,14 @@ runtime_config.app = app
 
 script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 runtime_config.script_directory = script_directory
+server_port              = os.environ.get('SERVER_PORT',         3011)
+server_host              = os.environ.get('SERVER_HOST',      "0.0.0.0")
 log_file_path            = os.environ.get('LOG_FILE',            join_path(script_directory, "logs", "app.log"))
 grafana_plugins_dir      = os.environ.get('GRAFANA_PLUGINS_DIR', join_path(script_directory, "grafana_plugins"))
 temp_grafana_plugins_dir = join_path(os.environ.get('TEMP_GRAFANA_PLUGINS_DIR', helpers.get_persistent_temp_dir()), "grafana_plguins")
 
+runtime_config.server_port              = server_port
+runtime_config.server_host              = server_host
 runtime_config.log_file_path            = log_file_path
 runtime_config.grafana_plugins_dir      = grafana_plugins_dir
 runtime_config.temp_grafana_plugins_dir = temp_grafana_plugins_dir
@@ -47,4 +51,9 @@ logging.basicConfig(
 from modules import routes
 
 if __name__ == '__main__':
-    app.run(debug=True, port=3011) 
+    logging.info(f"Starting grafana plugins server on address: {server_host}:{server_port}")
+    try:
+        app.run(debug=True, port=server_port, host=server_host) 
+    except Exception as e:
+        logging.error(f'{str(e)}')
+        raise e
