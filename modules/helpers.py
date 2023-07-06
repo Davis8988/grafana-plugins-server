@@ -173,10 +173,10 @@ def copy_file(src_file, dest_file):
         raise Exception(f'Even after copying file: {src_file} to: {dest_file} it is still missing or unreachable')
     logging.info(f'Success copying file: {src_file} to: {dest_file}')
     
-def copy_zip_file_to_plugins_dir(zip_file_path, plugins_dir):
-    create_dir(plugins_dir)
-    zip_file_name      = get_file_name_from_path(zip_file_path)
-    dest_zip_file_path = join_path(plugins_dir, zip_file_name)
+def copy_zip_file_to_plugins_dir(zip_file_path, plugin_zip_target_dir):
+    create_dir(plugin_zip_target_dir)
+    zip_file_name      = "download"
+    dest_zip_file_path = join_path(plugin_zip_target_dir, zip_file_name)
     copy_file(zip_file_path, dest_zip_file_path)
     return dest_zip_file_path
 
