@@ -323,8 +323,12 @@ def write_json_file(json_file_path, json_data):
     # Write JSON data to a file
     logging.info(f'Writing json data to: {json_file_path}')
     delete_file(json_file_path)
-    with open(json_file_path, 'w') as file:
-        json.dump(json_data, file, indent=4)
+    try:
+        with open(json_file_path, 'w') as file:
+            json.dump(json_data, file, indent=4)
+    except Exception as e:
+            logging.error(f'Failed to write json data to file: {json_file_path}')
+            return f'Failed to write json data to file: {json_file_path} - {str(e)}'
 
 def calculate_uploaded_plugins_summary_json_file():
     logging.info('Calculating uploaded plugins summary json file')
