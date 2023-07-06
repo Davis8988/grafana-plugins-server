@@ -7,4 +7,4 @@ class GrafanaPlugin:
         self.id           = kwargs.get('id', None)
         self.description  = kwargs.get('description', None)
         self.version      = kwargs.get('version', None)
-        self.dependencies = kwargs.get('dependencies', None)
+        # self.dependencies = kwargs.get('dependencies', None)
