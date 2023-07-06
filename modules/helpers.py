@@ -319,6 +319,13 @@ def construct_plugins_summary_json_file_data(grafana_plugins_obj_arr):
     return plugins_summary_json_file_data
     
 
+def write_json_file(json_file_path, json_data):
+    # Write JSON data to a file
+    logging.info(f'Writing json data to: {json_file_path}')
+    delete_file(json_file_path)
+    with open(json_file_path, 'w') as file:
+        json.dump(json_data, file, indent=4)
+
 def calculate_uploaded_plugins_summary_json_file():
     logging.info('Calculating uploaded plugins summary json file')
     all_plugins_json_files_arr = get_all_files_by_name_under_dir_path(runtime_config.grafana_plugins_dir)
