@@ -118,9 +118,13 @@ def upload():
     try:
         helpers.copy_file(plugin_json_file_path, plugin_zip_target_dir)
         logging.info(f'Success uploading and extracting file: {uploaded_file.filename}')
+        logging.info(f'Cleaning uploaded and temp files..')
+        helpers.delete_file(temp_uploaded_file_path)
+        helpers.remove_directory_with_content(temp_plugin_dir)
     except Exception as e:
         # Remove the uploaded file
         os.remove(file_path)
+        helpers.remove_directory_with_content(temp_plugin_dir)
         logging.error(f'Error while uploading file: {str(e)}')
 
         # Get a list of all files in the zip file
