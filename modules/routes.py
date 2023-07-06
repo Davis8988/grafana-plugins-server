@@ -117,7 +117,7 @@ def upload():
     plugin_json_file_path = helpers.get_plugins_json_file_path_from_zip_file(file_path)
     
     try:
-        helpers.extract_file_from_zip_to_dir(file_path, plugin_json_file_path, directory_path)
+        helpers.extract_file_from_zip_to_dir(file_path, plugin_json_file_path, plugin_zip_target_dir)
         logging.info(f'Success uploading and extracting file: {file.filename}')
     except Exception as e:
         # Remove the uploaded file
