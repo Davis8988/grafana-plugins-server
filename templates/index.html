@@ -41,6 +41,11 @@
 		.expanded-log-window {
 			height: 600px;
 		}
+
+	    .plugins-section {
+			display: flex;
+			padding-left: 20px;
+		}
     </style>
 </head>
 <body>
@@ -56,27 +61,28 @@
     <h2>
 		<a href="{{ url_for('plugins_page') }}">Plugins</a>
 	</h2>
-	
-    <ul>
-        {% for directory in directories %}
-            <li>
-                {{ directory }}
-                <button class="remove-button" onclick="confirmAndRemove('{{ directory }}')">Remove</button>
-                <ul>
-                    {% for file in os.listdir(os.path.join(app.config['GRAFANA_PLUGINS_DIR'], directory)) %}
-                        {% if file != 'plugin.json' %}
-                            <li>
-                                <a href="{{ url_for('download_file', path=directory+'/'+file) }}">{{ file }}</a>
-                                <button class="remove-button" onclick="confirmAndRemove('{{ directory }}/{{ file }}')">Remove</button>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            </li>
-        {% endfor %}
-    </ul>
-	
-	
+
+    <h3>
+		<a href="{{ url_for('plugins_page') }}">Repo</a>
+	</h3>
+	<ul>
+		{% for directory in directories %}
+			<li>
+				{{ directory }}
+				<button class="remove-button" onclick="confirmAndRemove('{{ directory }}')">Remove</button>
+				<ul>
+					{% for file in os.listdir(os.path.join(app.config['GRAFANA_PLUGINS_DIR'], directory)) %}
+						{% if file != 'plugin.json' %}
+							<li>
+								<a href="{{ url_for('download_file', path=directory+'/'+file) }}">{{ file }}</a>
+								<button class="remove-button" onclick="confirmAndRemove('{{ directory }}/{{ file }}')">Remove</button>
+							</li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</li>
+		{% endfor %}
+	</ul>
 	
 	<!-- Log Window -->
 	<div id="logging-window">

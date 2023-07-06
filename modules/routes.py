@@ -21,7 +21,7 @@ def index():
                             os=os,
                             app=app)
 
-@app.route('/plugins/list', methods = ['GET'])
+@app.route('/plugins', methods = ['GET'])
 def plugins_page():
     logging.info('Accessed plugins page')
     grafana_plugins_directory = app.config['GRAFANA_PLUGINS_DIR']
