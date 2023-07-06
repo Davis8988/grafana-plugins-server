@@ -93,18 +93,18 @@ def upload():
         return error_message
 
     # Save the uploaded file into a temp dir first..
-    temp_uploaded_file_path = helpers.save_file_in_dir(file, temp_grafana_plugins_dir)
+    extract_file_name = helpers.get_file_name_from_path(temp_uploaded_file_path)
+    temp_plugin_dir = join_path(temp_grafana_plugins_dir, extract_file_name)
+    temp_uploaded_file_path = helpers.save_file_in_dir(file, temp_plugin_dir)
     
     # Validate uploaded zip file:
     helpers.validate_uploaded_zip_file(temp_uploaded_file_path)
     
     # Extract the zip file to temp dir:
-    extract_file_name = helpers.get_file_name_from_path(temp_uploaded_file_path)
-    extract_zip_file_target_dir = join_path(temp_grafana_plugins_dir, extract_file_name)
-    helpers.extract_zip_to_dir(temp_uploaded_file_path, extract_zip_file_target_dir)
+    helpers.extract_zip_to_dir(temp_uploaded_file_path, temp_grafana_plugins_dir)
     
     # Read plugin details:
-    plugin_json_file_path = join_path(extract_zip_file_target_dir, "plugin.json")
+    plugin_json_file_path = join_path(temp_grafana_plugins_dir, "plugin.json")
     grafana_plugin_obj = helpers.read_plugin_details_from_plugin_json_file(plugin_json_file_path)  # When getting back an object from this method we know the object is validated - it has attributes: 'name' and 'version'
     
     plugin_id             = grafana_plugin_obj.id
