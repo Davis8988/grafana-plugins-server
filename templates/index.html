@@ -4,49 +4,6 @@
 <head>
     <title>Grafana Plugins Dashboard</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-    <style>
-        /* Additional CSS for log window */
-        .log-window {
-            background-color: #f8f8f8;
-            padding: 10px;
-            margin-top: 20px;
-            height: 400px;
-            overflow-y: scroll;
-        }
-		
-        .remove-button {
-			margin-left: 10px;
-			background-color: #800000; /* Updated color to burgundy */
-			cursor: pointer;
-			padding: 5px 10px;
-			border: 2px solid #000;
-			border-radius: 10px;
-			outline: none;
-        }
-
-		/* Separator bar CSS */
-		.separator-bar {
-			background-color: #000;
-			height: 3px;
-			cursor: row-resize;
-			margin-top: 10px;
-		}
-
-		#logging-window {
-			display: flex;
-			flex-direction: column;
-			height: 600px;
-
-		/* Expandable logging window */
-		.expanded-log-window {
-			height: 600px;
-		}
-
-	    .plugins-section {
-			display: flex;
-			padding-left: 20px;
-		}
-    </style>
 </head>
 <body>
     <h1>Grafana Plugins Dashboard</h1>
