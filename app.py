@@ -25,6 +25,7 @@ runtime_config.server_host              = server_host
 runtime_config.log_file_path            = log_file_path
 runtime_config.grafana_plugins_dir      = grafana_plugins_dir
 runtime_config.grafana_plugins_repo_dir = grafana_plugins_repo_dir
+runtime_config.grafana_plugins_summary_json_file = grafana_plugins_summary_json_file
 runtime_config.temp_grafana_plugins_dir = temp_grafana_plugins_dir
 
 
