@@ -221,8 +221,7 @@ def read_json_file(json_file_path):
         logging.error(str(e))
         raise e
     return json_data
-        
-        
+  
 def read_plugin_details_from_plugin_json_file(plugin_json_file_path):
     logging.info(f'Reading plugin details from: {plugin_json_file_path}')
     json_data = read_json_file(plugin_json_file_path)
@@ -235,6 +234,7 @@ def read_plugin_details_from_plugin_json_file(plugin_json_file_path):
     logging.info("Parsing json data into a GrafanaPlugin class obj")
     
     grafana_plugin = grafana_plugin.GrafanaPlugin(**json_data) # Create GrafanaPlugin instance
+    
     return grafana_plugin
     
     

@@ -1,4 +1,4 @@
-
+import logging
 
 class GrafanaPlugin:
     def __init__(self, **kwargs):
@@ -8,3 +8,13 @@ class GrafanaPlugin:
         self.description  = kwargs.get('description', None)
         self.version      = kwargs.get('version', None)
         # self.dependencies = kwargs.get('dependencies', None)
+
+
+def validate_grafana_plugin_class_obj(grafana_plugin):
+    logging.info("Validating grafana plugin class obj")
+    required_attributes = ['name', 'type', 'id', 'description', 'version']
+    for attr_name in required_attributes:
+        attr_value = getattr(grafana_plugin, attr_name)
+        if attr_value is None or not attr_value.strip():
+            return False
+    return True
