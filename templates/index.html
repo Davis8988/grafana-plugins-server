@@ -48,10 +48,6 @@
 
     <h2>Upload Plugin Zip</h2>
     <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
-        <select name="directory">
-            {% for directory in directories %}
-                <option value="{{ directory }}">{{ directory }}</option>
-            {% endfor %}
         </select>
         <input type="file" name="file">
         <input type="submit" value="Upload">
