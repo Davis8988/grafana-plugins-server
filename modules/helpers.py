@@ -235,7 +235,7 @@ def read_plugin_details_from_plugin_json_file(plugin_json_file_path):
     
     grafana_plugin_obj = grafana_plugin_class.GrafanaPlugin(**json_data) # Create GrafanaPlugin instance
     grafana_plugin_class.validate_grafana_plugin_class_obj(grafana_plugin_obj)
-    return grafana_plugin
+    return grafana_plugin_obj
     
     
 
