@@ -104,7 +104,8 @@ def upload():
     helpers.extract_zip_to_dir(temp_uploaded_file_path, extract_zip_file_target_dir)
     
     # Read plugin details:
-    grafana_plugin_obj = 
+    plugin_json_file_path = join_path(extract_zip_file_target_dir, "plugin.json")
+    grafana_plugin_obj = read_plugin_details_from_plugin_json_file(plugin_json_file_path)
     
     directory_path       = app.config['GRAFANA_PLUGINS_REPO_DIR']
     copied_zip_file_path = helpers.copy_zip_file_to_plugins_dir(temp_uploaded_file_path, directory_path)
