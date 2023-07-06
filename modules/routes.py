@@ -105,7 +105,7 @@ def upload():
     helpers.extract_zip_to_dir(temp_uploaded_file_path, temp_plugin_dir)
     
     # Read plugin details:
-    plugin_json_file_path = join_path(temp_plugin_dir, "plugin.json")
+    plugin_json_file_path = helpers.get_plugins_json_file_path_from_dir_path(temp_plugin_dir)
     grafana_plugin_obj = helpers.read_plugin_details_from_plugin_json_file(plugin_json_file_path)  # When getting back an object from this method we know the object is validated - it has attributes: 'name' and 'version'
     
     plugin_id             = grafana_plugin_obj.id
