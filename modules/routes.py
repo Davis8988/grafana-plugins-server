@@ -93,15 +93,15 @@ def upload():
         return error_message
 
     # Save the uploaded file into a temp dir first..
-    extract_file_name = helpers.get_file_name_from_path(temp_uploaded_file_path)
-    temp_plugin_dir = join_path(temp_grafana_plugins_dir, extract_file_name)
+    extract_file_name       = helpers.get_file_name_from_path(temp_uploaded_file_path)
+    temp_plugin_dir         = join_path(temp_grafana_plugins_dir, extract_file_name)
     temp_uploaded_file_path = helpers.save_file_in_dir(uploaded_file, temp_plugin_dir)
     
     # Validate uploaded zip file:
     helpers.validate_uploaded_zip_file(temp_uploaded_file_path)
     
     # Extract the zip file to temp dir:
-    helpers.extract_zip_to_dir(temp_uploaded_file_path, temp_grafana_plugins_dir)
+    helpers.extract_zip_to_dir(temp_uploaded_file_path, temp_plugin_dir)
     
     # Read plugin details:
     plugin_json_file_path = join_path(temp_grafana_plugins_dir, "plugin.json")
