@@ -123,17 +123,10 @@ def upload():
         helpers.delete_file(temp_uploaded_file_path)
         helpers.remove_directory_with_content(temp_plugin_dir)
     except Exception as e:
+        logging.error(f'Error while uploading file: {str(e)}')
         helpers.delete_file(file_path)
         helpers.remove_directory_with_content(temp_plugin_dir)
-        logging.error(f'Error while uploading file: {str(e)}')
-
-        # Get a list of all files in the zip file
-        with zipfile.ZipFile(file_path, 'r') as zip_ref:
-            file_list = zip_ref.namelist()
-
         error_message = f'Error: {str(e)}\n'
-        error_message += f'Files found in the zip file: {", ".join(file_list)}'
-
         return error_message
 
     return redirect(url_for('index'))

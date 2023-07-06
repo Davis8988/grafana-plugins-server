@@ -293,7 +293,7 @@ def construct_plugins_summary_json_file_data(grafana_plugins_obj_arr):
 
     parsed_plugins_map = {}
     for plugin_obj in grafana_plugins_obj_arr:
-        if not parsed_plugins_map[plugin_obj.id]:
+        if not parsed_plugins_map.get(plugin_obj.id, None):
             parsed_plugins_map[plugin_obj.id] = {
                 'plugin_obj'         : plugin_obj,
                 'plugin_versions_map': {}
@@ -332,7 +332,7 @@ def write_json_file(json_data, json_file_path):
 
 def calculate_uploaded_plugins_summary_json_file():
     logging.info('Calculating uploaded plugins summary json file')
-    all_plugins_json_files_arr = get_all_files_by_name_under_dir_path(runtime_config.grafana_plugins_dir)
+    all_plugins_json_files_arr = get_all_files_by_name_under_dir_path('plugin.json', runtime_config.grafana_plugins_dir)
     if len(all_plugins_json_files_arr) == 0:
         logging.warning(f"No 'plugin.json' files found in 1st level content of all directories under: {runtime_config.grafana_plugins_dir}")
         logging.warning("Cannot calculate plugins summary json file since no plugin.json files were found")
