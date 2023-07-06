@@ -186,8 +186,12 @@ def get_file_name_from_path(file_path):
 
 def extract_zip_to_dir(src_zip_file, dest_dir_to_extract_to):
     logging.info(f'Extracting zip file: {src_zip_file} to: {dest_dir_to_extract_to}')
-    with zipfile.ZipFile(src_zip_file, 'r') as zip_ref:
-        zip_ref.extractall(dest_dir_to_extract_to)
+    try:
+        with zipfile.ZipFile(src_zip_file, 'r') as zip_ref:
+            zip_ref.extractall(dest_dir_to_extract_to)
+    except Exception as e:
+        logging.error(f'Error while extracting zip file: {src_zip_file} to: {dest_dir_to_extract_to}')
+        return f'Error while extracting zip file: {src_zip_file} to: {dest_dir_to_extract_to} - {str(e)}'
     return dest_dir_to_extract_to
     
 def extract_file_from_zip_to_dir(src_zip_file, file_to_extract, dest_dir_to_extract_to):
