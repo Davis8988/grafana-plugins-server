@@ -58,7 +58,7 @@ def stream():
     return Response(flask_logger(), mimetype="text/plain", content_type="text/event-stream")
 
 
-def search_plugin_json(file_list):
+def search_plugin_json_in_zip_file_namelist(file_list):
     logging.info(f'Searching for "plugin.json" file in given zip')
     for file in file_list:
         if file.endswith('/plugin.json'):
@@ -138,7 +138,7 @@ def get_plugins_json_file_path_from_zip_file(zip_file):
         file_list = zip_ref.namelist()
 
         # Search for plugin.json recursively
-        plugin_json_file_path = search_plugin_json(file_list)
+        plugin_json_file_path = search_plugin_json_in_zip_file_namelist(file_list)
     if not plugin_json_file_path:
         raise Exception(f'"plugin.json" not found in the uploaded zip file: {zip_file}')
     return plugin_json_file_path
@@ -300,7 +300,7 @@ def construct_plugins_summary_json_file_data(grafana_plugins_obj_arr):
 
 def calculate_uploaded_plugins_summary_json_file():
     logging.info('Calculating uploaded plugins summary json file')
-    all_repo_dirs = list_first_level_dirs_under_path(runtime_config.grafana_plugins_repo_dir)
+    all_repo_dirs = list_first_level_dirs_under_path(runtime_config.grafana_plugins_dir)
     all_plugins_json_files_arr = []
     for grafana_plugin_dir in all_repo_dirs:
         grafana_plugin_dir_content = os.listdir(grafana_plugin_dir)
