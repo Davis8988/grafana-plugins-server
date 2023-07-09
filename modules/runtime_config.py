@@ -6,3 +6,4 @@ grafana_plugins_summary_json_file = None  # a json file containing information o
 temp_grafana_plugins_dir = None
 script_directory         = None
 repo_name                = "repo"
+bootstrap                = None

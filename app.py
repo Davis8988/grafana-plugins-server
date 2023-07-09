@@ -1,5 +1,6 @@
 from modules import runtime_config
 from flask import Flask
+from flask_bootstrap import Bootstrap
 import os
 import sys
 from os.path import join as join_path
@@ -22,6 +23,11 @@ grafana_plugins_summary_json_file = os.environ.get('GRAFANA_PLUGINS_SUMMARY_JSON
 temp_grafana_plugins_dir = join_path(os.environ.get('TEMP_GRAFANA_PLUGINS_DIR', helpers.get_persistent_temp_dir()), "grafana_plguins")
 
 app.secret_key = flask_secret_key
+# Bootstrap
+bootstrap = Bootstrap(app)
+
+# Configure runtime vars
+runtime_config.bootstrap                = bootstrap
 runtime_config.secret_key               = flask_secret_key
 runtime_config.server_port              = server_port
 runtime_config.server_host              = server_host
@@ -30,6 +36,8 @@ runtime_config.grafana_plugins_dir      = grafana_plugins_dir
 runtime_config.grafana_plugins_repo_dir = grafana_plugins_repo_dir
 runtime_config.grafana_plugins_summary_json_file = grafana_plugins_summary_json_file
 runtime_config.temp_grafana_plugins_dir = temp_grafana_plugins_dir
+
+
 
 
 # Configure app settings

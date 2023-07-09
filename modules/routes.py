@@ -22,7 +22,8 @@ def index():
     return render_template('index.html', 
                             directories=directories,
                             os=os,
-                            app=app)
+                            app=app,
+                            runtime_config=runtime_config)
 
 @app.route('/plugins', methods = ['GET'])
 def plugins_page():
@@ -32,7 +33,8 @@ def plugins_page():
     return render_template('plugins_page.html', 
                             directories=directories,
                             os=os,
-                            app=app)
+                            app=app,
+                            runtime_config=runtime_config)
 
 @app.route('/plugins/repo', methods = ['GET'])
 def plugins_repo_page():

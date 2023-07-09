@@ -50,6 +50,9 @@ function ebar (instance) {
       // (D) NOTIFICATION MESSAGE
       let msg = document.createElement("span");
       msg.innerHTML = instance.msg;
+      // let strongElem = document.createElement("strong");
+      // strongElem.appendChild(msg)
+      // bar.appendChild(strongElem);
       bar.appendChild(msg);
      
       // (E) ADD BAR TO CONTAINER

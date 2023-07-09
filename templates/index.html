@@ -5,8 +5,12 @@
 	<script type="text/javascript"
          src="{{ url_for('static', filename='scripts/error-bar.js') }}"></script>
     <title>Grafana Plugins Dashboard</title>
+	{{ runtime_config.bootstrap.css }}
+	{% block styles %}
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+	{% endblock %}
 </head>
+{% block content %}
 <body>
     <h1>Grafana Plugins Dashboard</h1>
 
@@ -28,6 +32,11 @@
 					<i class="ico">&#9747;</i>{{ message }}
 				</li>
 			</div> -->
+		  	{% elif messages and category == 'info' %}
+			  <script>
+				let uploadFileMessagesContainer = document.getElementById("upload_file_messages_container");
+				ebar({ lvl: 1, target: uploadFileMessagesContainer, msg: "{{ message }}" });
+			</script>
 		  	{% endif %}
 		{% endfor %}
 		</ul>
@@ -73,6 +82,8 @@
 		</div>
 	</div>
 
+
+	{{ runtime_config.bootstrap.js }}
     <script>
 		var isScrolledDown = false
         function confirmAndRemove(fileOrDirPath) {
@@ -137,4 +148,5 @@
 		});
     </script>
 </body>
+{% endblock %}
 </html>
