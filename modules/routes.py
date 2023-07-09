@@ -96,7 +96,7 @@ def download_file(path):
 def upload():
     uploaded_file = request.files['file']
     if not grafana_plugin_file.validate_uploaded_zip_file(uploaded_file):
-        return
+        return redirect(url_for('index'))
 
     # Save the uploaded file into a temp dir first..
     extract_file_name           = uploaded_file.filename
