@@ -99,7 +99,7 @@ def upload():
         return
 
     # Save the uploaded file into a temp dir first..
-    grafana_plugin_file.validate_uploaded_zip_file(uploaded_file):
+    # grafana_plugin_file.validate_uploaded_zip_file(uploaded_file):
     extract_file_name           = uploaded_file.filename
     file_name_without_extension = os.path.splitext(extract_file_name)[0]
     temp_uploaded_file_path     = helpers.save_file_in_dir(uploaded_file, temp_grafana_plugins_dir)
