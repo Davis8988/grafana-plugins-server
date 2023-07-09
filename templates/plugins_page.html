@@ -8,7 +8,7 @@
     <h1>Grafana Plugins</h1>
     {% for directory in directories %}
         <h2>{{ directory }}</h2>
-        <ul></ul>
+        <ul>
         {% for root, dirs, files in os.walk(os.path.join(app.config['GRAFANA_PLUGINS_DIR'], directory)) %}
             {% for file in files %}
                 {% if file.endswith('.zip') %}
