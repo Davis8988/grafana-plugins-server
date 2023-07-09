@@ -95,11 +95,7 @@ def download_file(path):
 @app.route('/upload', methods=['POST'])
 def upload():
     uploaded_file = request.files['file']
-    
-    if not uploaded_file or not helpers.allowed_file(uploaded_file.filename):
-        error_message = f'Error uploading: "{uploaded_file.filename}" - Invalid file or file type not allowed. Only "*.zip" files are allowed'
-        logging.error(error_message)
-        return error_message
+    grafana_plugin_file.validate_uploaded_zip_file(uploaded_file)
 
     # Save the uploaded file into a temp dir first..
     extract_file_name           = uploaded_file.filename
