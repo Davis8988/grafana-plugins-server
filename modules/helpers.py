@@ -63,6 +63,7 @@ def search_plugin_json_in_zip_file_namelist(file_list):
     logging.info(f'Searching for "plugin.json" file in given zip')
     for file in file_list:
         if file.endswith('/plugin.json'):
+            logging.info(f'Found: {file}')
             return file
     return None
 
@@ -121,7 +122,9 @@ def get_plugins_json_file_path_from_dir_path(dir_path):
     file_name = "plugin.json"
     for root, dirs, files in os.walk(dir_path):
         if file_name in files:
-            return os.path.join(root, file_name)
+            plugins_json_file_path = os.path.join(root, file_name)
+            logging.info(f'Found: {plugins_json_file_path}')
+            return plugins_json_file_path
     logging.warning(f'Failed to find "plugin.json" file under: {dir_path}')
     return None
 
@@ -130,7 +133,9 @@ def get_all_files_by_name_under_dir_path(file_name, dir_path):
     found_files_arr = []
     for root, dirs, files in os.walk(dir_path):
         if file_name in files:
-            found_files_arr.append(os.path.join(root, file_name))
+            found_file_path = os.path.join(root, file_name)
+            logging.info(f'Found: {found_file_path}')
+            found_files_arr.append(found_file_path)
     return found_files_arr
 
 def get_plugins_json_file_path_from_zip_file(zip_file):
