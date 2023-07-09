@@ -12,6 +12,7 @@ runtime_config.app = app
 
 script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 runtime_config.script_directory = script_directory
+flask_secret_key         = os.environ.get('FLASK_SECRET_KEY', "super-secret-key")
 server_port              = os.environ.get('SERVER_PORT',         3011)
 server_host              = os.environ.get('SERVER_HOST',      "0.0.0.0")
 log_file_path            = os.environ.get('LOG_FILE',            join_path(script_directory, "logs", "app.log"))
@@ -20,6 +21,8 @@ grafana_plugins_repo_dir = os.environ.get('GRAFANA_PLUGINS_REPO_DIR', join_path(
 grafana_plugins_summary_json_file = os.environ.get('GRAFANA_PLUGINS_SUMMARY_JSON_FILE', join_path(grafana_plugins_dir, "plugins_summary.json"))
 temp_grafana_plugins_dir = join_path(os.environ.get('TEMP_GRAFANA_PLUGINS_DIR', helpers.get_persistent_temp_dir()), "grafana_plguins")
 
+app.secret_key = flask_secret_key
+runtime_config.secret_key               = flask_secret_key
 runtime_config.server_port              = server_port
 runtime_config.server_host              = server_host
 runtime_config.log_file_path            = log_file_path
