@@ -35,7 +35,7 @@
 		  	{% elif messages and category == 'info' %}
 			  <script>
 				let uploadFileMessagesContainer = document.getElementById("upload_file_messages_container");
-				ebar({ lvl: 1, target: uploadFileMessagesContainer, msg: "{{ message }}" });
+				ebar({ lvl: 2, target: uploadFileMessagesContainer, msg: "{{ message }}" });
 			</script>
 		  	{% endif %}
 		{% endfor %}

@@ -2,6 +2,7 @@ from modules import runtime_config
 from modules import helpers
 from modules import grafana_plugin_file
 from flask import render_template, request, redirect, url_for, send_from_directory, Response, jsonify
+from flask import flash
 import os
 from os.path import join as join_path
 import zipfile
@@ -28,8 +29,8 @@ def index():
 @app.route('/plugins', methods = ['GET'])
 def plugins_page():
     logging.info('Accessed plugins page')
-    grafana_plugins_repo_directory = app.config['GRAFANA_PLUGINS_REPO_DIR']
-    directories = [ name for name in os.listdir(grafana_plugins_repo_directory) if os.path.isdir(os.path.join(grafana_plugins_repo_directory, name)) ]  # Get only dirs
+    grafana_plugins_directory = app.config['GRAFANA_PLUGINS_DIR']
+    directories = [ name for name in os.listdir(grafana_plugins_directory) if os.path.isdir(os.path.join(grafana_plugins_directory, name)) ]  # Get only dirs
     return render_template('plugins_page.html', 
                             directories=directories,
                             os=os,
