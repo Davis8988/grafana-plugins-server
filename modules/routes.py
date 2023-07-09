@@ -105,7 +105,7 @@ def upload():
     temp_plugin_dir             = join_path(temp_grafana_plugins_dir, file_name_without_extension)
     
     # Validate uploaded zip file:
-    if not grafana_plugin_file.validate_uploaded_zip_file(uploaded_file):
+    if not grafana_plugin_file.validate_temp_save_zip_file(temp_uploaded_file_path):
         return
         
     # Print
