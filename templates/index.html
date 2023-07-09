@@ -9,11 +9,18 @@
     <h1>Grafana Plugins Dashboard</h1>
 
     <h2>Upload Plugin Zip File</h2>
-	{% with messages = get_flashed_messages() %}
+	{% with messages = get_flashed_messages(with_categories=true) %}
 	{% if messages %}
 		<ul class=flashes>
-		{% for message in messages %}
-		<li>{{ message }}</li>
+		{% for category, message in messages %}
+			{% if messages and category == 'error' %}
+			<div class="bar error">
+				<div class="close" onclick="this.parentElement.remove()">X</div>
+		  		<li>
+					<i class="ico">&#9747;</i>{{ message }}
+				</li>
+			</div>
+		  	{% endif %}
 		{% endfor %}
 		</ul>
 	{% endif %}
@@ -58,6 +65,7 @@
 		</div>
 	</div>
 
+	<script type="text/javascript" src="../js/error-bar.js"></script>
     <script>
 		var isScrolledDown = false
         function confirmAndRemove(fileOrDirPath) {

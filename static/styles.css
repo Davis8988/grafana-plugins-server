@@ -102,3 +102,30 @@ button:hover {
   display: flex;
   padding-left: 20px;
 }
+
+/* (C) ICONS */
+i.ico {
+  display: inline-block;
+  width: 20px;
+  text-align: center; 
+  font-style: normal;
+  font-weight: bold;
+}
+
+/* (D) CLOSE BUTTON */
+.bar { position: relative; }
+div.close {
+  position: absolute;
+  top: 30%;
+  right: 10px;
+  color: #888;
+  cursor: pointer;
+}
+
+.error {
+  padding: 10px;
+  margin: 10px;
+  color: #ba3939;
+  background: #ffe0e0;
+  border: 1px solid #a33a3a;
+}
