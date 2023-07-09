@@ -55,9 +55,16 @@ logging.basicConfig(
 # Add all routes
 from modules import routes
 
+def prepare_runtime_env():
+    logging.info("Preparing runtime environment")
+    helpers.create_dir(grafana_plugins_repo_dir)
+    helpers.create_dir(temp_grafana_plugins_dir)
+    logging.info("Success - Finished preparing runtime environment")
+
 if __name__ == '__main__':
     logging.info(f"Starting grafana plugins server on address: {server_host}:{server_port}")
     try:
+        prepare_runtime_env()
         app.run(debug=True, port=server_port, host=server_host) 
     except Exception as e:
         logging.info(f'An exception has occurred during execution of the plugins server')
