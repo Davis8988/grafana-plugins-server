@@ -114,7 +114,7 @@ def upload():
     # Get plugin.json file from inside the zip file
     plugin_json_file_in_zip = helpers.get_plugins_json_file_path_from_zip_file(temp_uploaded_file_path)  # On error it will raise an exception
     
-    # save file 'plugin.json' into a temp dir
+    # Save file 'plugin.json' into a temp dir
     plugin_json_file_path = helpers.extract_file_from_zip_to_dir(temp_uploaded_file_path, plugin_json_file_in_zip, temp_plugin_dir)
     
     # Read plugin details:
