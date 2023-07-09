@@ -19,3 +19,4 @@ def validate_temp_save_zip_file(zip_file_path):
         return False
     helpers.print_zip_file_containing_files(zip_file_path)
     helpers.get_plugins_json_file_path_from_zip_file(zip_file_path)
+    return True
