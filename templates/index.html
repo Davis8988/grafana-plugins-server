@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<script type="text/javascript"
+         src="{{ url_for('static', filename='scripts/error-bar.js') }}"></script>
     <title>Grafana Plugins Dashboard</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
@@ -9,17 +11,23 @@
     <h1>Grafana Plugins Dashboard</h1>
 
     <h2>Upload Plugin Zip File</h2>
+	<!-- (B) HTML CONTAINER -->
+	<div id="upload_file_messages_container"></div>
 	{% with messages = get_flashed_messages(with_categories=true) %}
 	{% if messages %}
 		<ul class=flashes>
 		{% for category, message in messages %}
 			{% if messages and category == 'error' %}
-			<div class="bar error">
+			<script>
+				let uploadFileMessagesContainer = document.getElementById("upload_file_messages_container");
+				ebar({ lvl: 4, target: uploadFileMessagesContainer, msg: "{{ message }}" });
+			</script>
+			<!-- <div class="bar error">
 				<div class="close" onclick="this.parentElement.remove()">X</div>
 		  		<li>
 					<i class="ico">&#9747;</i>{{ message }}
 				</li>
-			</div>
+			</div> -->
 		  	{% endif %}
 		{% endfor %}
 		</ul>
@@ -65,7 +73,6 @@
 		</div>
 	</div>
 
-	<script type="text/javascript" src="../js/error-bar.js"></script>
     <script>
 		var isScrolledDown = false
         function confirmAndRemove(fileOrDirPath) {
