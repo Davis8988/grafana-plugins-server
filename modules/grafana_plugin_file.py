@@ -11,8 +11,10 @@ def validate_uploaded_zip_file(zip_file_obj):
         flash(error_message)
         return False
     if not file_exists(zip_file_path):
-        logging.error(f'Missing or unreachable uploaded zip file: {zip_file_path} - cannot validate it')
-        raise Exception(f'Missing or unreachable uploaded zip file: {zip_file_path} - cannot validate it')
+        error_message = f'Missing or unreachable uploaded zip file: {zip_file_path} - cannot validate it'
+        logging.error(error_message)
+        flash(error_message)
+        return False
     print_zip_file_containing_files(zip_file_path)
     get_plugins_json_file_path_from_zip_file(zip_file_path)
 
