@@ -100,10 +100,10 @@ def upload():
         return error_message
 
     # Save the uploaded file into a temp dir first..
-    extract_file_name       = uploaded_file.filename
+    extract_file_name           = uploaded_file.filename
     file_name_without_extension = os.path.splitext(extract_file_name)[0]
-    temp_uploaded_file_path = helpers.save_file_in_dir(uploaded_file, temp_grafana_plugins_dir)
-    temp_plugin_dir         = join_path(temp_grafana_plugins_dir, file_name_without_extension)
+    temp_uploaded_file_path     = helpers.save_file_in_dir(uploaded_file, temp_grafana_plugins_dir)
+    temp_plugin_dir             = join_path(temp_grafana_plugins_dir, file_name_without_extension)
     
     # Validate uploaded zip file:
     helpers.validate_uploaded_zip_file(temp_uploaded_file_path)
