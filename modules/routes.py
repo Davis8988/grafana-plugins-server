@@ -110,6 +110,8 @@ def upload():
         
     # Print
     helpers.print_zip_file_containing_files(temp_uploaded_file_path)
+    
+    # Get plugin.json file from inside the zip file
     plugin_json_file_in_zip = helpers.get_plugins_json_file_path_from_zip_file(temp_uploaded_file_path)  # On error it will raise an exception
     
     # Extract the zip file to temp dir:
