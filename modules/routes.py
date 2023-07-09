@@ -30,7 +30,7 @@ def index():
 def plugins_page():
     logging.info('Accessed plugins page')
     grafana_plugins_directory = app.config['GRAFANA_PLUGINS_DIR']
-    directories = [ name for name in os.listdir(grafana_plugins_directory) if os.path.isdir(os.path.join(grafana_plugins_directory, name)) ]  # Get only dirs
+    directories = [ name for name in os.listdir(grafana_plugins_directory) if os.path.isdir(os.path.join(grafana_plugins_directory, name)) and (name != "repo") ]  # Get only dirs
     return render_template('plugins_page.html', 
                             directories=directories,
                             os=os,
