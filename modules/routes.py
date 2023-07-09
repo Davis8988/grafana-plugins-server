@@ -107,6 +107,7 @@ def upload():
     # Validate uploaded zip file:
     if not grafana_plugin_file.validate_uploaded_zip_file(uploaded_file):
         return
+        
     # Print
     helpers.print_zip_file_containing_files(zip_file_path)
     helpers.get_plugins_json_file_path_from_zip_file(zip_file_path)
