@@ -9,6 +9,16 @@
     <h1>Grafana Plugins Dashboard</h1>
 
     <h2>Upload Plugin Zip File</h2>
+	{% with messages = get_flashed_messages() %}
+	{% if messages %}
+		<ul class=flashes>
+		{% for message in messages %}
+		<li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	{% endif %}
+	{% endwith %}
+	{% block body %}{% endblock %}
     <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
         </select>
         <input type="file" name="file">
