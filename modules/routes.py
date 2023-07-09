@@ -124,7 +124,7 @@ def upload():
     plugin_version        = grafana_plugin_obj.version
     grafana_plugins_dir   = app.config['GRAFANA_PLUGINS_DIR']
     plugin_zip_target_dir = join_path(grafana_plugins_dir, plugin_id, "versions", plugin_version)
-    helpers.remove_directory_with_content(plugin_zip_target_dir)  # Remove old dir containing the specific version's files
+    helpers.remove_directory_with_content(plugin_zip_target_dir)  # Remove the old dir (if exists) containing the specific version's files
     copied_zip_file_path  = helpers.copy_zip_file_to_plugins_dir(temp_uploaded_file_path, plugin_zip_target_dir)
     file_path             = copied_zip_file_path
     
