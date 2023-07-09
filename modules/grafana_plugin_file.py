@@ -8,7 +8,7 @@ def validate_uploaded_zip_file(zip_file_obj):
     if not uploaded_file or not helpers.allowed_file(uploaded_file.filename):
         error_message = f'Error uploading: "{uploaded_file.filename}" - Invalid file or file type not allowed. Only "*.zip" files are allowed'
         logging.error(error_message)
-        return error_message
+        flash(error_message)
     if not file_exists(zip_file_path):
         logging.error(f'Missing or unreachable uploaded zip file: {zip_file_path} - cannot validate it')
         raise Exception(f'Missing or unreachable uploaded zip file: {zip_file_path} - cannot validate it')
