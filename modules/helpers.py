@@ -218,6 +218,7 @@ def extract_file_from_zip_to_dir(src_zip_file, file_to_extract, dest_dir_to_extr
     with zipfile.ZipFile(src_zip_file, 'r') as zip_ref:
         zip_ref.extract(file_to_extract, path=dest_dir_to_extract_to)
     logging.info(f'Success extracting {file_to_extract} from: {src_zip_file} to: {dest_dir_to_extract_to}')
+    return dest_file_path
     
 
 def remove_directory_with_content(dir_path):
