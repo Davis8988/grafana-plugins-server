@@ -17,6 +17,7 @@ def validate_uploaded_zip_file(zip_file_obj):
         return False
     helpers.print_zip_file_containing_files(zip_file_path)
     helpers.get_plugins_json_file_path_from_zip_file(zip_file_path)
+    return True
 
 def upload():
     uploaded_file = request.files['file']
