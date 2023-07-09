@@ -107,13 +107,6 @@ def create_dir(dir_path):
         raise Exception(f'Error creating dir: {str(e)}')
     logging.info(f'Success creating dir: {dir_path}')
     
-def validate_uploaded_zip_file(zip_file_path):
-    logging.info(f'Validating uploaded zip file: {zip_file_path}')
-    if not file_exists(zip_file_path):
-        logging.error(f'Missing or unreachable uploaded zip file: {zip_file_path} - cannot validate it')
-        raise Exception(f'Missing or unreachable uploaded zip file: {zip_file_path} - cannot validate it')
-    print_zip_file_containing_files(zip_file_path)
-    get_plugins_json_file_path_from_zip_file(zip_file_path)
 
 def print_zip_file_containing_files(zip_file):
     with zipfile.ZipFile(zip_file, 'r') as zip_ref:

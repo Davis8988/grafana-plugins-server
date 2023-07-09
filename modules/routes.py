@@ -1,5 +1,6 @@
 from modules import runtime_config
 from modules import helpers
+from modules import grafana_plugin_file
 from flask import render_template, request, redirect, url_for, send_from_directory, Response, jsonify
 import os
 from os.path import join as join_path
@@ -94,6 +95,7 @@ def download_file(path):
 @app.route('/upload', methods=['POST'])
 def upload():
     uploaded_file = request.files['file']
+    
     if not uploaded_file or not helpers.allowed_file(uploaded_file.filename):
         error_message = f'Error uploading: "{uploaded_file.filename}" - Invalid file or file type not allowed. Only "*.zip" files are allowed'
         logging.error(error_message)
