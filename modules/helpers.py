@@ -2,7 +2,6 @@ from classes import grafana_plugin as grafana_plugin_class
 from distutils.version import StrictVersion
 from modules import runtime_config
 from flask import Response
-from urllib.parse import urljoin
 import os
 from time import sleep
 from os.path import join as join_path
@@ -12,10 +11,9 @@ import shutil
 import json
 
 def join_url_path(*args):
-    logging.info(f"Joining: {args}")
-    url_joined = urljoin(*args)
+    url_joined = '/'.join(args)
     logging.info(f"Returning {url_joined}")
-    return urljoin(*args)
+    return url_joined
 
 def get_persistent_temp_dir():
     temp_dir = '/tmp' # Unix-like
