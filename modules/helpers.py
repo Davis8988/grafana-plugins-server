@@ -335,7 +335,12 @@ def construct_plugin_versions_json_file_data(plugin_id):
         return plugin_versions_json_file_content
         
     for version_dir_name in plugin_versions_dirs_names_list:
-        
+        plugin_version_json_data = {
+            "arch": {
+                "any": {}
+            },
+            "version": version_dir_name
+        }
 
 def construct_plugins_summary_json_file_data():
     logging.info('Constructing all plugins summary json file content')
