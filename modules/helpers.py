@@ -383,5 +383,5 @@ def calculate_uploaded_plugin_versions_json_file(plugin_id):
         logging.error(err_msg)
         raise Exception(err_msg)
     plugin_versions_json_file_path = os.path.join(runtime_config.grafana_plugins_dir, plugin_id, "versions.json")
-    write_json_file(plugins_summary_json_file_content, plugin_versions_json_file_path)
+    write_json_file(plugin_versions_json_file_content, plugin_versions_json_file_path)
     pass
