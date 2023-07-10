@@ -306,6 +306,9 @@ def list_first_level_files_under_path(dir_path):
         logging.error(f'Error while attempting to list 1st level directories under path: {str(e)}')
         raise e
 
+
+def construct_plugin_versions_json_file_data():
+
 def construct_plugins_summary_json_file_data():
     logging.info('Constructing all plugins summary json file content')
     # Construct the JSON structure
@@ -373,4 +376,10 @@ def calculate_uploaded_plugins_summary_json_file():
 
 def calculate_uploaded_plugin_versions_json_file(plugin_id):
     logging.info(f'Calculating uploaded plugin {plugin_id} versions json file')
+    plugin_versions_json_file_content = construct_plugins_summary_json_file_data()
+    if not plugins_summary_json_file_content:
+        err_msg = f"Failed to construct plugins summary json file content from all 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"
+        logging.error(err_msg)
+        raise Exception(err_msg)
+    write_json_file(plugins_summary_json_file_content, runtime_config.grafana_plugins_summary_json_file)
     pass
