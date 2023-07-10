@@ -32,16 +32,6 @@ def download_file_from_plugins(filename):
     directory = app.config['GRAFANA_PLUGINS_DIR']
     return send_from_directory(directory, filename, as_attachment=True)
 
-@app.route('/plugins/delete/<path:filename>', methods=['POST'])
-def delete_plugin(filename):
-    directory = app.config['GRAFANA_PLUGINS_DIR']
-    file_path = os.path.join(directory, filename)
-    logging.info(f"Removing: {file_path}")
-    if os.path.isfile(file_path):
-        os.remove(file_path)
-    
-    return redirect(url_for('plugins_page'))
-
 @app.route('/plugins/repo', methods = ['GET'])
 def plugins_repo_page():
     logging.info('Accessed plugins/repo page')
