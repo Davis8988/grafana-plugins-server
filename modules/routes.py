@@ -64,9 +64,9 @@ def plugins_repo_page():
 def plugins_repo_list_plugin_versions_page():
     logging.info(f'Accessed plugins/repo/{plugin_id} page')
     plugin_versions_json_file_content = helpers.construct_plugin_versions_json_file_data(plugin_id)
-    if plugin_versions_json_file_content:
-        return jsonify(plugin_versions_json_file_content)
-
+    if not plugin_versions_json_file_content:
+        logging.error(f'plugin_versions_json_file_content is unll')
+    return jsonify(plugin_versions_json_file_content)
 # @app.route('/create_directory', methods=['POST'])
 # def create_directory():
 #     directory_name = runtime_config.repo_name
