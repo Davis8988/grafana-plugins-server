@@ -341,6 +341,8 @@ def construct_plugin_versions_json_file_data(plugin_id):
             },
             "version": version_dir_name
         }
+        plugin_versions_json_file_content['versions'].append(plugin_version_json_data)
+    return plugin_versions_json_file_content
 
 def construct_plugins_summary_json_file_data():
     logging.info('Constructing all plugins summary json file content')
