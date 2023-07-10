@@ -61,7 +61,7 @@ def plugins_repo_page():
     return jsonify(json_data)
 
 @app.route('/plugins/repo/<path:plugin_id>', methods = ['GET'])
-def plugins_repo_list_plugin_versions_page():
+def plugins_repo_list_plugin_versions_page(plugin_id):
     logging.info(f'Accessed plugins/repo/{plugin_id} page')
     plugin_versions_json_file_content = helpers.construct_plugin_versions_json_file_data(plugin_id)
     if not plugin_versions_json_file_content:
