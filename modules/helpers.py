@@ -308,7 +308,24 @@ def list_first_level_files_under_path(dir_path):
 
 
 def construct_plugin_versions_json_file_data(plugin_id):
-    plugin_versions_dir = os.path.join(runtime_config.grafana_plugins_dir, plugin_id, "versions")
+    logging.info(f'Constructing plugin {plugin_id} versions json file content')
+    # Construct the JSON structure
+    plugin_versions_json_file_content = {
+        "versions": []
+    }
+    plugin_dir = os.path.join(runtime_config.grafana_plugins_dir, plugin_id)
+    if not dir_exists(plugin_dir):
+        logging.warning(f"No plugin {} dir exists at: {plugin_dir}")
+        logging.warning(f"Cannot calculate plugin {plugin_id} versions json file since no plugin versions were found")
+        return plugins_summary_json_file_data
+    plugin_versions_dir = os.path.join(plugin_dir, "versions")
+    if not dir_exists(plugin_versions_dir):
+        logging.warning(f"No plugin {plugin_id} versions dirs were found under: {plugin_dir}")
+        logging.warning(f"Cannot calculate plugin {plugin_id} versions json file since no plugin versions were found")
+        return plugins_summary_json_file_data
+
+    for directory_name in list_first_level_dirs_under_path(plugin_versions_dir):
+        
     pass
 
 def construct_plugins_summary_json_file_data():
