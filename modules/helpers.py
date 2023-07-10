@@ -328,13 +328,14 @@ def construct_plugin_versions_json_file_data(plugin_id):
         logging.warning(f"Cannot calculate plugin '{plugin_id}' versions json file since plugin versions dir doesn't exist")
         return plugin_versions_json_file_content
 
-    plugin_versions_dirs_names = list_first_level_dirs_under_path(plugin_versions_dir)
-    if len(plugin_versions_dirs_names) == 0:
+    plugin_versions_dirs_names_list = list_first_level_dirs_under_path(plugin_versions_dir)
+    if len(plugin_versions_dirs_names_list) == 0:
         logging.warning(f"No plugin '{plugin_id}' versions dirs were found under: \"{plugin_versions_dir}\" - Did you upload any versions of this plugin?")
         logging.warning(f"Cannot calculate plugin '{plugin_id}' versions json file since no plugin versions dirs were found")
         return plugin_versions_json_file_content
         
-    pass
+    for version_dir_name in plugin_versions_dirs_names_list:
+        
 
 def construct_plugins_summary_json_file_data():
     logging.info('Constructing all plugins summary json file content')
