@@ -37,7 +37,7 @@ def download_plugin(plugin_id, plugin_version):
     logging.info(f'Accessed plugins/{plugin_id}/versions/{plugin_version}/download page')
     plugin_version_dir = join_path(app.config['GRAFANA_PLUGINS_DIR'], plugin_id, 'versions', plugin_version)
     if not helpers.dir_exists(plugin_version_dir):
-        
+        logging.error(f"Missing or unreachable plugin: '{plugin_id}' version dir: \"{plugin_version_dir}\" - cannot download this plugin")
     return send_from_directory(directory, filename, as_attachment=True)
 
 @app.route('/plugins/repo', methods = ['GET'])
