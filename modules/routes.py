@@ -26,16 +26,31 @@ def index():
                             app=app,
                             runtime_config=runtime_config)
 
+@app.route('/plugins/download/<path:filename>', methods=['GET'])
+def download_plugin(filename):
+    directory = app.config['GRAFANA_PLUGINS_DIR']
+    return send_from_directory(directory, filename, as_attachment=True)
+
 @app.route('/plugins', methods = ['GET'])
 def plugins_page():
     logging.info('Accessed plugins page')
     grafana_plugins_directory = app.config['GRAFANA_PLUGINS_DIR']
-    directories = [ name for name in os.listdir(grafana_plugins_directory) if os.path.isdir(os.path.join(grafana_plugins_directory, name)) and (name != "repo") ]  # Get only dirs
+    # directories = [ name for name in os.listdir(grafana_plugins_directory) if os.path.isdir(os.path.join(grafana_plugins_directory, name)) and (name != "repo") ]  # Get only dirs
     return render_template('plugins_page.html', 
-                            directories=directories,
+                            # directories=directories,
                             os=os,
                             app=app,
                             runtime_config=runtime_config)
+
+@app.route('/plugins/delete/<path:filename>', methods=['POST'])
+def delete_plugin(filename):
+    directory = app.config['GRAFANA_PLUGINS_DIR']
+    file_path = os.path.join(directory, filename)
+    logging.info(f"Removing: {file_path}")
+    if os.path.isfile(file_path):
+        os.remove(file_path)
+    
+    return redirect(url_for('plugins_page'))
 
 @app.route('/plugins/repo', methods = ['GET'])
 def plugins_repo_page():

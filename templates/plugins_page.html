@@ -3,20 +3,60 @@
 <html>
 <head>
     <title>Grafana Plugins</title>
+    <style>
+        .plugin-item {
+            display: flex;
+            align-items: center;
+        }
+        .download-link {
+            margin-top: 8px;
+            font-size: 20px;
+        }
+        .delete-button {
+            margin-top: 8px;
+            margin-left: 15px;
+            background-color: #ffa52e;
+            border: darkblue;
+            color: white;
+            padding: 1px 1px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .delete-button:hover {
+            background-color: #ff1744;
+        }
+        .delete-button:active {
+            background-color: #ff5252;
+        }
+
+        .dashboard-link {
+            display: inline-block;
+            padding: 5px 8px;
+            border-radius: 8px;
+            background-color: #368b39;
+            color: white;
+            font-size: 19px;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
+    <br>
+    <a href="{{ url_for('index') }}" class="dashboard-link">&larr; Dashboard</a>
+    <br><br>
     <h1>Grafana Plugins</h1>
-    {% for directory in directories %}
-        <h2>{{ directory }}</h2>
-        <ul>
-        {% for root, dirs, files in os.walk(os.path.join(app.config['GRAFANA_PLUGINS_DIR'], directory)) %}
-            {% for file in files %}
-                {% if file.endswith('.zip') %}
-                <li>{{ os.path.join(root, file) }}</li>
-                {% endif %}
-            {% endfor %}
+    {% set root_dir = app.config['GRAFANA_PLUGINS_DIR'] %}
+    {% for directory_, _, files in os.walk(root_dir) %}
+        {% for file_name in files if file_name.endswith('.zip') %}
+            {% set rel_dir = os.path.relpath(directory_, root_dir) %}
+            {% set rel_file = os.path.join(rel_dir, file_name) %}
+            <div class="plugin-item">
+                <a href="{{ url_for('download_plugin', filename=rel_file) }}" class="download-link">{{ rel_file }}</a>
+                <form method="POST" action="{{ url_for('delete_plugin', filename=rel_file) }}" class="delete-button">
+                    <input type="submit" value="Delete">
+                </form>
+            </div>
         {% endfor %}
-        </ul>
     {% endfor %}
 </body>
 </html>
