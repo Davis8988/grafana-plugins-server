@@ -370,4 +370,6 @@ def calculate_uploaded_plugins_summary_json_file():
         logging.error(err_msg)
         raise Exception(err_msg)
     write_json_file(plugins_summary_json_file_content, runtime_config.grafana_plugins_summary_json_file)
-    
+
+def calculate_uploaded_plugin_versions_json_file(plugin_id):
+    pass
