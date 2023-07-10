@@ -28,20 +28,9 @@ def index():
                             runtime_config=runtime_config)
 
 @app.route('/plugins/download/<path:filename>', methods=['GET'])
-def download_plugin(filename):
+def download_file_from_plugins(filename):
     directory = app.config['GRAFANA_PLUGINS_DIR']
     return send_from_directory(directory, filename, as_attachment=True)
-
-@app.route('/plugins', methods = ['GET'])
-def plugins_page():
-    logging.info('Accessed plugins page')
-    grafana_plugins_directory = app.config['GRAFANA_PLUGINS_DIR']
-    # directories = [ name for name in os.listdir(grafana_plugins_directory) if os.path.isdir(os.path.join(grafana_plugins_directory, name)) and (name != "repo") ]  # Get only dirs
-    return render_template('plugins_page.html', 
-                            # directories=directories,
-                            os=os,
-                            app=app,
-                            runtime_config=runtime_config)
 
 @app.route('/plugins/delete/<path:filename>', methods=['POST'])
 def delete_plugin(filename):
@@ -68,15 +57,6 @@ def plugins_repo_list_plugin_versions_page(plugin_id):
         logging.error(f'plugin_versions_json_file_content is unll')
         plugin_versions_json_file_content = {}
     return jsonify(plugin_versions_json_file_content)
-# @app.route('/create_directory', methods=['POST'])
-# def create_directory():
-#     directory_name = runtime_config.repo_name
-#     directory_path = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory_name)
-#     os.makedirs(directory_path, exist_ok=True)
-#     logging.info(f'Created directory: {directory_name}')
-#     return redirect(url_for('index'))
-
-
 
 
 @app.route("/log_stream", methods=["GET"])
@@ -112,12 +92,6 @@ def remove_file():
     helpers.delete_file(file_path)
     logging.info(f'Removed file: {file_name} from directory: {directory_name}')
     return redirect(url_for('index'))
-
-@app.route('/download/<path:path>')
-def download_file(path):
-    directory = os.path.dirname(path)
-    filename = os.path.basename(path)
-    return send_from_directory(os.path.join(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory), filename, as_attachment=True)
 
 @app.route('/upload', methods=['POST'])
 def upload():
