@@ -24,6 +24,7 @@ def index():
                             directories=directories,
                             os=os,
                             app=app,
+                            helpers=helpers,
                             runtime_config=runtime_config)
 
 @app.route('/plugins/download/<path:filename>', methods=['GET'])

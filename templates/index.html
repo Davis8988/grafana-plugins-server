@@ -8,6 +8,7 @@
 	{{ runtime_config.bootstrap.css }}
 	{% block styles %}
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='plugins_page_styles.css') }}">
 	{% endblock %}
 </head>
 {% block content %}
@@ -53,23 +54,34 @@
 		<a href="{{ url_for('plugins_page') }}">Plugins</a>
 	</h2>
 
-	<ul>
-		{% for directory in directories %}
+	<ul style="list-style-type: none;">
+		{% set root_dir = app.config['GRAFANA_PLUGINS_DIR'] %}
+		{% for directory_name in helpers.list_first_level_dirs_under_path(root_dir) if directory_name.lower() != 'repo' %}
+		{% set plugin_dir_path = os.path.join(root_dir, directory_name) %}
+		<li>
+		
+			<strong>{{ directory_name }}</strong>
+			<button class="remove-button" onclick="confirmAndRemove('{{ plugin_dir_path }}')">Remove</button>
+			{% set plugin_versions_dir = os.path.join(root_dir, directory_name, 'versions') %}
+			{% for version_str in helpers.list_first_level_dirs_under_path(plugin_versions_dir) %}
+			{% set plugin_version_dir = os.path.join(plugin_versions_dir, version_str) %}
 			<li>
-				{{ directory }}
-				<button class="remove-button" onclick="confirmAndRemove('{{ directory }}')">Remove</button>
-				<ul>
-					{% for file in os.listdir(os.path.join(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory)) %}
-						{% if file != 'plugin.json' %}
-							<li>
-								<a href="{{ url_for('download_file', path=directory+'/'+file) }}">{{ file }}</a>
-								<button class="remove-button" onclick="confirmAndRemove('{{ directory }}/{{ file }}')">Remove</button>
-							</li>
-						{% endif %}
-					{% endfor %}
+				<ul style="padding-left: 50px;">
+					<li>
+						{% for plugin_zip_file_name in helpers.list_first_level_files_under_path(plugin_version_dir) if plugin_zip_file_name.endswith('.zip') %}
+						{% set plugin_version_dir_url_path = helpers.join_url_path(directory_name, 'versions', version_str) %}
+						{% set plugin_zip_file_relative_path = helpers.join_url_path(plugin_version_dir_url_path, plugin_zip_file_name) %}
+						<div class="plugin-item">
+							<a href="{{ url_for('download_plugin', filename=plugin_zip_file_relative_path) }}" class="download-link">{{ version_str }}</a>
+							<button class="remove-button" onclick="confirmAndRemove('{{ plugin_version_dir }}')">Remove</button>
+						</div>
+						{% endfor %}
+					</li>
 				</ul>
+			{% endfor %}
 			</li>
 		{% endfor %}
+		</li>
 	</ul>
 	
 	<!-- Log Window -->

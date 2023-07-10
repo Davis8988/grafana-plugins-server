@@ -2,6 +2,7 @@ from classes import grafana_plugin as grafana_plugin_class
 from distutils.version import StrictVersion
 from modules import runtime_config
 from flask import Response
+from urllib.parse import urljoin
 import os
 from time import sleep
 from os.path import join as join_path
@@ -9,6 +10,12 @@ import zipfile
 import logging
 import shutil
 import json
+
+def join_url_path(*args):
+    logging.info(f"Joining: {args}")
+    url_joined = urljoin(*args)
+    logging.info(f"Returning {url_joined}")
+    return urljoin(*args)
 
 def get_persistent_temp_dir():
     temp_dir = '/tmp' # Unix-like
@@ -150,6 +157,12 @@ def get_plugins_json_file_path_from_zip_file(zip_file):
         raise Exception(f'"plugin.json" not found in the uploaded zip file: {zip_file}')
     return plugin_json_file_path
 
+def get_first_directory(path):
+    head, tail = os.path.split(path)
+    if not tail:  # Reached the first directory component
+        head, tail = os.path.split(head)
+    return tail
+
 def file_exists(file_path):
     return os.path.exists(file_path)
 
@@ -281,6 +294,15 @@ def list_first_level_dirs_under_path(dir_path):
     logging.info("Listing 1st level directories under: {dir_path} ")
     try:
         return [ name for name in os.listdir(dir_path) if os.path.isdir(os.path.join(dir_path, name)) ]  # Get only dirs
+    except Exception as e:
+        logging.info(f'Failed to list 1st level directories under path: {dir_path} ')
+        logging.error(f'Error while attempting to list 1st level directories under path: {str(e)}')
+        raise e
+
+def list_first_level_files_under_path(dir_path):
+    logging.info(f"Listing 1st level files under: {dir_path} ")
+    try:
+        return [ name for name in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, name)) ]  # Get only dirs
     except Exception as e:
         logging.info(f'Failed to list 1st level directories under path: {dir_path} ')
         logging.error(f'Error while attempting to list 1st level directories under path: {str(e)}')
