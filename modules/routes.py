@@ -60,6 +60,14 @@ def plugins_repo_page():
     json_data = helpers.read_json_file(runtime_config.grafana_plugins_summary_json_file)
     return jsonify(json_data)
 
+@app.route('/plugins/repo/<path:plugin_id>', methods = ['GET'])
+def plugins_repo_list_plugin_versions_page(plugin_id):
+    logging.info(f'Accessed plugins/repo/{plugin_id} page')
+    plugin_versions_json_file_content = helpers.construct_plugin_versions_json_file_data(plugin_id)
+    if not plugin_versions_json_file_content:
+        logging.error(f'plugin_versions_json_file_content is unll')
+        plugin_versions_json_file_content = {}
+    return jsonify(plugin_versions_json_file_content)
 # @app.route('/create_directory', methods=['POST'])
 # def create_directory():
 #     directory_name = runtime_config.repo_name

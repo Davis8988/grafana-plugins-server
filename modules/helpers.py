@@ -306,6 +306,47 @@ def list_first_level_files_under_path(dir_path):
         logging.error(f'Error while attempting to list 1st level directories under path: {str(e)}')
         raise e
 
+
+def construct_plugin_versions_json_file_data(plugin_id):
+    logging.info(f'Constructing plugin {plugin_id} versions json file content')
+    # Construct the JSON structure
+    plugin_versions_json_file_content = {
+        "versions": []
+    }
+    
+    # Check plugin dir exists
+    plugin_dir = os.path.join(runtime_config.grafana_plugins_dir, plugin_id)
+    if not dir_exists(plugin_dir):
+        logging.warning(f"No plugin '{plugin_id}' dir exists at: \"{plugin_dir}\" - Did you upload this plugin?")
+        logging.warning(f"Cannot calculate plugin '{plugin_id}' versions json file since plugin dir doesn't exist")
+        return plugin_versions_json_file_content
+    
+    # Check plugin dir has any versions
+    plugin_versions_dir = os.path.join(plugin_dir, "versions")
+    if not dir_exists(plugin_versions_dir):
+        logging.warning(f"No plugin '{plugin_id}' versions dir exists at: \"{plugin_versions_dir}\" - Did you upload any versions of this plugin?")
+        logging.warning(f"Cannot calculate plugin '{plugin_id}' versions json file since plugin versions dir doesn't exist")
+        return plugin_versions_json_file_content
+
+    plugin_versions_dirs_names_list = list_first_level_dirs_under_path(plugin_versions_dir)
+    if len(plugin_versions_dirs_names_list) == 0:
+        logging.warning(f"No plugin '{plugin_id}' versions dirs were found under: \"{plugin_versions_dir}\" - Did you upload any versions of this plugin?")
+        logging.warning(f"Cannot calculate plugin '{plugin_id}' versions json file since no plugin versions dirs were found")
+        return plugin_versions_json_file_content
+
+    # Collect versions dirs into the json file content    
+    for version_dir_name in plugin_versions_dirs_names_list:
+        plugin_version_json_data = {
+            "arch": {
+                "any": {}
+            },
+            "version": version_dir_name
+        }
+        plugin_versions_json_file_content['versions'].append(plugin_version_json_data)
+    
+    # Finish
+    return plugin_versions_json_file_content
+
 def construct_plugins_summary_json_file_data():
     logging.info('Constructing all plugins summary json file content')
     # Construct the JSON structure
@@ -366,8 +407,18 @@ def calculate_uploaded_plugins_summary_json_file():
     logging.info('Calculating uploaded plugins summary json file')
     plugins_summary_json_file_content = construct_plugins_summary_json_file_data()
     if not plugins_summary_json_file_content:
-        err_msg = f"Failed to construct plugins summary json file content from all 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"
+        err_msg = f"Failed to construct plugins summary json file content from all 'plugin.json' files found under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"
         logging.error(err_msg)
         raise Exception(err_msg)
     write_json_file(plugins_summary_json_file_content, runtime_config.grafana_plugins_summary_json_file)
-    
+
+def calculate_uploaded_plugin_versions_json_file(plugin_id):
+    logging.info(f'Calculating uploaded plugin {plugin_id} versions json file')
+    plugin_versions_json_file_content = construct_plugin_versions_json_file_data(plugin_id)
+    if not plugin_versions_json_file_content:
+        err_msg = f"Failed to construct plugin {plugin_id} versions json file content from files found under 1st level content of all directories under: {os.join.path(runtime_config.grafana_plugins_dir, plugin_id)}"
+        logging.error(err_msg)
+        raise Exception(err_msg)
+    plugin_versions_json_file_path = os.path.join(runtime_config.grafana_plugins_dir, plugin_id, "versions.json")
+    write_json_file(plugin_versions_json_file_content, plugin_versions_json_file_path)
+    pass
