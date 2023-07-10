@@ -308,6 +308,7 @@ def list_first_level_files_under_path(dir_path):
 
 
 def construct_plugin_versions_json_file_data(plugin_id):
+    plugin_versions_dir = os.path.join(runtime_config.grafana_plugins_dir, plugin_id, "versions")
     pass
 
 def construct_plugins_summary_json_file_data():
