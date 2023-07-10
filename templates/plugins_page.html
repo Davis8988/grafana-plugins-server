@@ -1,0 +1,22 @@
+<!-- templates/plugins.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grafana Plugins</title>
+</head>
+<body>
+    <h1>Grafana Plugins</h1>
+    {% for directory in directories %}
+        <h2>{{ directory }}</h2>
+        <ul>
+        {% for root, dirs, files in os.walk(os.path.join(app.config['GRAFANA_PLUGINS_DIR'], directory)) %}
+            {% for file in files %}
+                {% if file.endswith('.zip') %}
+                <li>{{ os.path.join(root, file) }}</li>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        </ul>
+    {% endfor %}
+</body>
+</html>
