@@ -333,7 +333,8 @@ def construct_plugin_versions_json_file_data(plugin_id):
         logging.warning(f"No plugin '{plugin_id}' versions dirs were found under: \"{plugin_versions_dir}\" - Did you upload any versions of this plugin?")
         logging.warning(f"Cannot calculate plugin '{plugin_id}' versions json file since no plugin versions dirs were found")
         return plugin_versions_json_file_content
-        
+
+    # Collect versions dirs into the json file content    
     for version_dir_name in plugin_versions_dirs_names_list:
         plugin_version_json_data = {
             "arch": {
@@ -342,6 +343,8 @@ def construct_plugin_versions_json_file_data(plugin_id):
             "version": version_dir_name
         }
         plugin_versions_json_file_content['versions'].append(plugin_version_json_data)
+    
+    # Finish
     return plugin_versions_json_file_content
 
 def construct_plugins_summary_json_file_data():
