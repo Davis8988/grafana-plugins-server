@@ -370,7 +370,7 @@ def calculate_uploaded_plugins_summary_json_file():
     logging.info('Calculating uploaded plugins summary json file')
     plugins_summary_json_file_content = construct_plugins_summary_json_file_data()
     if not plugins_summary_json_file_content:
-        err_msg = f"Failed to construct plugins summary json file content from all 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"
+        err_msg = f"Failed to construct plugins summary json file content from all 'plugin.json' files found under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"
         logging.error(err_msg)
         raise Exception(err_msg)
     write_json_file(plugins_summary_json_file_content, runtime_config.grafana_plugins_summary_json_file)
@@ -378,8 +378,8 @@ def calculate_uploaded_plugins_summary_json_file():
 def calculate_uploaded_plugin_versions_json_file(plugin_id):
     logging.info(f'Calculating uploaded plugin {plugin_id} versions json file')
     plugin_versions_json_file_content = construct_plugin_versions_json_file_data(plugin_id)
-    if not plugins_summary_json_file_content:
-        err_msg = f"Failed to construct plugins summary json file content from all 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"
+    if not plugin_versions_json_file_content:
+        err_msg = f"Failed to construct plugin {plugin_id} versions json file content from files found under 1st level content of all directories under: {os.join.path(runtime_config.grafana_plugins_dir, plugin_id)}"
         logging.error(err_msg)
         raise Exception(err_msg)
     write_json_file(plugins_summary_json_file_content, runtime_config.grafana_plugins_summary_json_file)
