@@ -39,7 +39,11 @@ def download_plugin(plugin_id, plugin_version):
     if not helpers.dir_exists(plugin_version_dir):
         logging.error(f"Missing or unreachable plugin: '{plugin_id}' version dir: \"{plugin_version_dir}\" - cannot download this plugin")
         return jsonify({})
-    return send_from_directory(directory, filename, as_attachment=True)
+    first_level_files = [file_name for file_name in helpers.list_first_level_files_under_path(plugin_version_dir) if file_name.endswith(".zip")]
+    if len(first_level_files) == 0:
+        logging.error(f"Did not find any plugin: '{plugin_id}'  .zip files under version dir: \"{plugin_version_dir}\" - cannot download this plugin")
+        return jsonify({})
+    return send_from_directory(plugin_version_dir, filename, as_attachment=True)
 
 @app.route('/plugins/repo', methods = ['GET'])
 def plugins_repo_page():
