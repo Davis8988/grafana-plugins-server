@@ -80,7 +80,7 @@ def stream():
     
 @app.route('/remove/<path:file_or_dir_path>', methods=['GET'])
 def remove_file_or_dir(file_or_dir_path):
-    path_to_remove = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], file_or_dir_path)
+    path_to_remove = join_path(app.config['GRAFANA_PLUGINS_DIR'], file_or_dir_path)
     logging.info(f'Removing: {path_to_remove}')
     if not helpers.file_exists(path_to_remove):
         return f'Error: File or directory not found: {path_to_remove}'

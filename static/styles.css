@@ -79,6 +79,13 @@ button:hover {
   outline: none;
 }
 
+.plugin-dir-name {
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+  color: goldenrod;
+}
+
 /* Separator bar CSS */
 .separator-bar {
   background-color: #000;
