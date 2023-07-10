@@ -32,6 +32,10 @@ a {
   text-decoration: none;
 }
 
+.plugins-title {
+  color: #0040ff
+}
+
 a:hover {
   text-decoration: underline;
 }
