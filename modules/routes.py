@@ -39,6 +39,7 @@ def download_plugin(plugin_id, plugin_version):
     if not helpers.dir_exists(plugin_version_dir):
         logging.error(f"Missing or unreachable plugin: '{plugin_id}' version dir: \"{plugin_version_dir}\" - cannot download this plugin")
         return jsonify({})
+    logging.info(f"Searching for plugin: '{plugin_id}' .zip file under path: {plugin_version_dir}")
     first_level_files = [file_name for file_name in helpers.list_first_level_files_under_path(plugin_version_dir) if file_name.endswith(".zip")]
     if len(first_level_files) == 0:
         logging.error(f"Did not find any plugin: '{plugin_id}'  .zip files under version dir: \"{plugin_version_dir}\" - cannot download this plugin")
