@@ -295,7 +295,9 @@ def read_plugin_details_from_plugin_json_file(plugin_json_file_path):
     logging.info("Parsing json data into a GrafanaPlugin class obj")
     
     grafana_plugin_obj = grafana_plugin_class.GrafanaPlugin(**json_data) # Create GrafanaPlugin instance
-    grafana_plugin_class.validate_grafana_plugin_class_obj(grafana_plugin_obj)
+    if not grafana_plugin_class.validate_grafana_plugin_class_obj(grafana_plugin_obj):
+        logging.error("Failed to parse json data into a GrafanaPlugin class obj")
+        return None
     return grafana_plugin_obj
 
 def list_first_level_dirs_under_path(dir_path):
