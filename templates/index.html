@@ -15,10 +15,10 @@
     <h1>Grafana Plugins Dashboard</h1>
 
     <h2>Upload Plugin Zip File</h2>
-	<h4>Curl Examples</h4>
+	<h4>Curl Upload Examples</h4>
 	<ul>
-		<li><strong>CMD</strong>  for /f %a in ('dir /b /s *.zip') do echo Uploading %a && curl -X POST -F file=@"%a" http://grafana-plugins-server:3011/upload</li>
-		<li><strong>Bash</strong>  for i in $(find /opt/dir -name *.zip -type f); do echo Uploading ${i} && curl -X POST -F file=@"${i}" http://grafana-plugins-server:3011/upload; done</li>
+		<li><strong>CMD:</strong> for /f %a in ('dir /b /s *.zip') do echo Uploading %a && curl -X POST -F file=@"%a" http://grafana-plugins-server:3011/upload</li>
+		<li><strong>Bash:</strong> for i in $(find /opt/dir -name *.zip -type f); do echo Uploading ${i} && curl -X POST -F file=@"${i}" http://grafana-plugins-server:3011/upload; done</li>
 	</ul>
 	<!-- (B) HTML CONTAINER -->
 	<div id="upload_file_messages_container"></div>
