@@ -84,7 +84,7 @@ if __name__ == '__main__':
         logging.info(f"Starting grafana plugins server on address: {server_host}:{server_port}")
         try:
             prepare_runtime_env()
-            serve(app, port=server_port, host=server_host)
+            serve(app, port=server_port, host=server_host, threads=thread_count)
         except Exception as e:
             logging.info(f'An exception has occurred during execution of the plugins server')
             logging.error(f'{str(e)}')
