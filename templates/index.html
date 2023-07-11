@@ -8,7 +8,6 @@
 	{{ runtime_config.bootstrap.css }}
 	{% block styles %}
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='plugins_page_styles.css') }}">
 	{% endblock %}
 </head>
 {% block content %}
@@ -50,9 +49,7 @@
         <input type="submit" value="Upload">
     </form>
 
-    <h2>
-		<a href="{{ url_for('plugins_page') }}">Plugins</a>
-	</h2>
+    <h2 class="plugins-title">Plugins</h2>
 
 	<ul style="list-style-type: none;">
 		{% set root_dir = app.config['GRAFANA_PLUGINS_DIR'] %}
@@ -73,7 +70,7 @@
 						{% for plugin_zip_file_name in helpers.list_first_level_files_under_path(plugin_version_dir) if plugin_zip_file_name.endswith('.zip') %}
 							{% set plugin_zip_file_relative_url_path = helpers.join_url_path(plugin_version_dir_url_path, plugin_zip_file_name) %}
 							<div class="plugin-item">
-								<a href="{{ url_for('download_plugin', filename=plugin_zip_file_relative_url_path) }}" class="download-link">{{ version_str }}</a>
+								<a href="{{ url_for('download_file_from_plugins', filename=plugin_zip_file_relative_url_path) }}" class="download-link">{{ version_str }}</a>
 								<button class="remove-button" onclick="confirmAndRemove('{{ plugin_version_dir_url_path }}')">Remove</button>
 							</div>
 						{% endfor %}

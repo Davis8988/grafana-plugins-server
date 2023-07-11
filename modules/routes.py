@@ -28,36 +28,37 @@ def index():
                             runtime_config=runtime_config)
 
 @app.route('/plugins/download/<path:filename>', methods=['GET'])
-def download_plugin(filename):
+def download_file_from_plugins(filename):
+    logging.info(f'Accessed plugins/download/{filename} page')
     directory = app.config['GRAFANA_PLUGINS_DIR']
+    logging.info(f"Returning plugin zip file: {filename} for download")
     return send_from_directory(directory, filename, as_attachment=True)
 
-@app.route('/plugins', methods = ['GET'])
-def plugins_page():
-    logging.info('Accessed plugins page')
-    grafana_plugins_directory = app.config['GRAFANA_PLUGINS_DIR']
-    # directories = [ name for name in os.listdir(grafana_plugins_directory) if os.path.isdir(os.path.join(grafana_plugins_directory, name)) and (name != "repo") ]  # Get only dirs
-    return render_template('plugins_page.html', 
-                            # directories=directories,
-                            os=os,
-                            app=app,
-                            runtime_config=runtime_config)
-
-@app.route('/plugins/delete/<path:filename>', methods=['POST'])
-def delete_plugin(filename):
-    directory = app.config['GRAFANA_PLUGINS_DIR']
-    file_path = os.path.join(directory, filename)
-    logging.info(f"Removing: {file_path}")
-    if os.path.isfile(file_path):
-        os.remove(file_path)
-    
-    return redirect(url_for('plugins_page'))
+@app.route('/plugins/<path:plugin_id>/versions/<path:plugin_version>/download', methods=['GET'])
+def download_plugin(plugin_id, plugin_version):
+    logging.info(f'Accessed plugins/{plugin_id}/versions/{plugin_version}/download page')
+    plugin_version_dir = join_path(app.config['GRAFANA_PLUGINS_DIR'], plugin_id, 'versions', plugin_version)
+    if not helpers.dir_exists(plugin_version_dir):
+        logging.error(f"Missing or unreachable plugin: '{plugin_id}' version dir: \"{plugin_version_dir}\" - cannot download this plugin")
+        return jsonify({})
+    logging.info(f"Searching for plugin: '{plugin_id}' .zip file under path: {plugin_version_dir}")
+    first_level_files = [file_name for file_name in helpers.list_first_level_files_under_path(plugin_version_dir) if file_name.endswith(".zip")]
+    if len(first_level_files) == 0:
+        logging.error(f"Did not find any plugin: '{plugin_id}'  .zip files under version dir: \"{plugin_version_dir}\" - cannot download this plugin")
+        return jsonify({})
+    plugin_zip_file_name = first_level_files[0]
+    logging.info(f"Returning plugin zip file: {plugin_zip_file_name} for download")
+    return send_from_directory(plugin_version_dir, plugin_zip_file_name, as_attachment=True)
 
 @app.route('/plugins/repo', methods = ['GET'])
 def plugins_repo_page():
     logging.info('Accessed plugins/repo page')
     helpers.calculate_uploaded_plugins_summary_json_file()
     json_data = helpers.read_json_file(runtime_config.grafana_plugins_summary_json_file)
+    json_pretty_data = helpers.get_pretty_json_data_str(json_data)
+    logging.info(f"Returning json data")
+    if json_pretty_data:
+        logging.info(f'\n{json_pretty_data}')
     return jsonify(json_data)
 
 @app.route('/plugins/repo/<path:plugin_id>', methods = ['GET'])
@@ -65,18 +66,11 @@ def plugins_repo_list_plugin_versions_page(plugin_id):
     logging.info(f'Accessed plugins/repo/{plugin_id} page')
     plugin_versions_json_file_content = helpers.construct_plugin_versions_json_file_data(plugin_id)
     if not plugin_versions_json_file_content:
-        logging.error(f'plugin_versions_json_file_content is unll')
+        logging.error(f'plugin_versions_json_file_content is null')
         plugin_versions_json_file_content = {}
+    logging.info(f"Returning json data")
+    logging.info(f"\n{plugin_versions_json_file_content}")
     return jsonify(plugin_versions_json_file_content)
-# @app.route('/create_directory', methods=['POST'])
-# def create_directory():
-#     directory_name = runtime_config.repo_name
-#     directory_path = join_path(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory_name)
-#     os.makedirs(directory_path, exist_ok=True)
-#     logging.info(f'Created directory: {directory_name}')
-#     return redirect(url_for('index'))
-
-
 
 
 @app.route("/log_stream", methods=["GET"])
@@ -112,12 +106,6 @@ def remove_file():
     helpers.delete_file(file_path)
     logging.info(f'Removed file: {file_name} from directory: {directory_name}')
     return redirect(url_for('index'))
-
-@app.route('/download/<path:path>')
-def download_file(path):
-    directory = os.path.dirname(path)
-    filename = os.path.basename(path)
-    return send_from_directory(os.path.join(app.config['GRAFANA_PLUGINS_REPO_DIR'], directory), filename, as_attachment=True)
 
 @app.route('/upload', methods=['POST'])
 def upload():

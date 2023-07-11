@@ -10,6 +10,16 @@ import logging
 import shutil
 import json
 
+def get_pretty_json_data_str(json_data):
+    json_pretty_data = None
+    logging.info(f'Preparing json pretty data string')
+    try:
+        json_pretty_data = json.dumps(json_data, indent=4)
+    except Exception as e:
+        logging.error(f'Failed to prepare json pretty data string')
+        logging.error(f'{str(e)}')
+    return json_pretty_data
+
 def join_url_path(*args):
     url_joined = '/'.join(args)
     logging.info(f"Returning {url_joined}")
