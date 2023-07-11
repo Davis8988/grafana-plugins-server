@@ -6,6 +6,7 @@ import os
 import sys
 from os.path import join as join_path
 import logging
+from logging.handlers import RotatingFileHandler
 from modules import helpers
 
 
@@ -55,6 +56,8 @@ helpers.prepare_grafana_plugins_dir(grafana_plugins_dir)
 log_level = os.environ.get('LOG_LEVEL', logging.INFO)
 # create formatter
 formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s", "%Y-%m-%d %H:%M:%S")
+# add a rotating handler
+rotate_log_file_handler = RotatingFileHandler(path, maxBytes=40, backupCount=1)
 logging.basicConfig(
     level=log_level,
     format=' %(asctime)s :: %(levelname)-5s :: %(message)s',  # Updated logging format
