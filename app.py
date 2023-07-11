@@ -57,14 +57,15 @@ log_level = os.environ.get('LOG_LEVEL', logging.INFO)
 # create formatter
 formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s", "%Y-%m-%d %H:%M:%S")
 # add a rotating handler
-rotate_log_file_handler = RotatingFileHandler(path, maxBytes=40, backupCount=1)
+rotate_log_file_handler = RotatingFileHandler(log_file_path, maxBytes=40, backupCount=1)  # 1 kilobyte
 logging.basicConfig(
     level=log_level,
     format=' %(asctime)s :: %(levelname)-5s :: %(message)s',  # Updated logging format
     datefmt="%Y-%m-%d  %H:%M:%S",
     handlers=[
-        logging.FileHandler(log_file_path),  # Log to file
-        logging.StreamHandler()  # Log to console
+        # logging.FileHandler(log_file_path),  # Log to file
+        logging.StreamHandler(),  # Log to console
+        rotate_log_file_handler  # Log File Rotate
     ]
 )
 
