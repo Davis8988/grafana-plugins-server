@@ -53,6 +53,8 @@ def plugins_repo_page():
     logging.info('Accessed plugins/repo page')
     helpers.calculate_uploaded_plugins_summary_json_file()
     json_data = helpers.read_json_file(runtime_config.grafana_plugins_summary_json_file)
+
+    logging.info(f"Returning json data: {json_data}")
     return jsonify(json_data)
 
 @app.route('/plugins/repo/<path:plugin_id>', methods = ['GET'])
