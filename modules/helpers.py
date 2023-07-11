@@ -18,6 +18,7 @@ def get_pretty_json_data_str(json_data):
     except Exception as e:
         logging.error(f'Failed to prepare json pretty data string')
         logging.error(f'{str(e)}')
+    return json_pretty_data
 
 def join_url_path(*args):
     url_joined = '/'.join(args)
