@@ -192,6 +192,11 @@ def upload():
     
     # Read plugin details:
     grafana_plugin_obj = helpers.read_plugin_details_from_plugin_json_file(plugin_json_file_path)  # When getting back an object from this method we know the object is validated - it has attributes: 'name' and 'version'
+    grafana_plugin_obj = helpers.read_plugin_details_from_plugin_json_file(plugin_json_file_path)  # When getting back an object from this method we know the object is validated - it has attributes: 'name' and 'version'
+    if not grafana_plugin_obj:
+        err_msg = f"Failed to upload file: {uploaded_file} because failed to read plugin details from plugin json file. Check the logs for more details on why"
+        logging.error(err_msg)
+        return err_msg
     
     plugin_id             = grafana_plugin_obj.id
     plugin_version        = grafana_plugin_obj.version
