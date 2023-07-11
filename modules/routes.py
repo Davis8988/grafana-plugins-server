@@ -45,6 +45,7 @@ def download_plugin(plugin_id, plugin_version):
         logging.error(f"Did not find any plugin: '{plugin_id}'  .zip files under version dir: \"{plugin_version_dir}\" - cannot download this plugin")
         return jsonify({})
     plugin_zip_file_name = first_level_files[0]
+    logging.info(f"Returning plugin zip file: {plugin_zip_file_name} to requester for download")
     return send_from_directory(plugin_version_dir, plugin_zip_file_name, as_attachment=True)
 
 @app.route('/plugins/repo', methods = ['GET'])
