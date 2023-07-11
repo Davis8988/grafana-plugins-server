@@ -29,7 +29,9 @@ def index():
 
 @app.route('/plugins/download/<path:filename>', methods=['GET'])
 def download_file_from_plugins(filename):
+    logging.info(f'Accessed plugins/download/{filename} page')
     directory = app.config['GRAFANA_PLUGINS_DIR']
+    logging.info(f"Returning plugin zip file: {filename} for download")
     return send_from_directory(directory, filename, as_attachment=True)
 
 @app.route('/plugins/<path:plugin_id>/versions/<path:plugin_version>/download', methods=['GET'])
