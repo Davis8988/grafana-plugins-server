@@ -1,5 +1,5 @@
 
-DOCKER_IMAGE_TAG=${$1:-grafana-plugins-server:0.0.1}
+DOCKER_IMAGE_TAG=${$1:-"grafana-plugins-server:0.0.1"}
 cmndStr="docker build -t \"${DOCKER_IMAGE_TAG}\" ."
 echo "${cmndStr}"
 eval "${cmndStr}"
