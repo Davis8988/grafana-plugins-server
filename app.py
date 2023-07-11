@@ -80,11 +80,12 @@ def prepare_runtime_env():
     logging.info("Success - Finished preparing runtime environment")
 
 if __name__ == '__main__':
-    logging.info(f"Starting grafana plugins server on address: {server_host}:{server_port}")
-    try:
-        prepare_runtime_env()
-        serve(app, port=server_port, host=server_host)
-    except Exception as e:
-        logging.info(f'An exception has occurred during execution of the plugins server')
-        logging.error(f'{str(e)}')
-        raise e
+    while True:
+        logging.info(f"Starting grafana plugins server on address: {server_host}:{server_port}")
+        try:
+            prepare_runtime_env()
+            serve(app, port=server_port, host=server_host)
+        except Exception as e:
+            logging.info(f'An exception has occurred during execution of the plugins server')
+            logging.error(f'{str(e)}')
+            raise e
