@@ -23,6 +23,7 @@ grafana_plugins_summary_json_file = os.environ.get('GRAFANA_PLUGINS_SUMMARY_JSON
 temp_grafana_plugins_dir = join_path(os.environ.get('TEMP_GRAFANA_PLUGINS_DIR', helpers.get_persistent_temp_dir()), "grafana_plguins")
 
 app.secret_key = flask_secret_key
+
 # Bootstrap
 bootstrap = Bootstrap(app)
 
@@ -44,6 +45,7 @@ runtime_config.temp_grafana_plugins_dir = temp_grafana_plugins_dir
 app.config['GRAFANA_PLUGINS_DIR']      = grafana_plugins_dir
 app.config['GRAFANA_PLUGINS_REPO_DIR'] = grafana_plugins_repo_dir
 app.config['ALLOWED_EXTENSIONS']       = {'zip'}
+app.config['WERKZEUG_DEBUG_PIN']       = 'off'
 
 # Prepare env:
 helpers.prepare_logging_dir(log_file_path)
@@ -76,7 +78,7 @@ if __name__ == '__main__':
     logging.info(f"Starting grafana plugins server on address: {server_host}:{server_port}")
     try:
         prepare_runtime_env()
-        app.run(debug=True, port=server_port, host=server_host) 
+        app.run(port=server_port, host=server_host) 
     except Exception as e:
         logging.info(f'An exception has occurred during execution of the plugins server')
         logging.error(f'{str(e)}')

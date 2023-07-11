@@ -13,12 +13,13 @@
             "cwd": "${workspaceFolder}",
             "env": {
                 "FLASK_APP": "app.py",
-                "FLASK_DEBUG": "1",
-                "SERVER_PORT": "3022"
+                "FLASK_DEBUG": "True",
+                "SERVER_PORT": "3022",
+                "WERKZEUG_DEBUG_PIN": "off"
             },
             "args": [
                 "run",
-                "--no-debugger",
+                // "--no-debugger",
                 // "--no-reload"
             ],
             "jinja": true,
