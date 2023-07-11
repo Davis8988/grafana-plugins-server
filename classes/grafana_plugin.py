@@ -23,3 +23,4 @@ def validate_grafana_plugin_class_obj(grafana_plugin):
             err_msg = f"Grafana plugin class obj is missing or has an empty value attribute: '{attr_name}'"
             logging.error(err_msg)
             return False
+    return True
