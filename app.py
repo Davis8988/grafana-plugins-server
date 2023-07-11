@@ -45,7 +45,6 @@ runtime_config.temp_grafana_plugins_dir = temp_grafana_plugins_dir
 app.config['GRAFANA_PLUGINS_DIR']      = grafana_plugins_dir
 app.config['GRAFANA_PLUGINS_REPO_DIR'] = grafana_plugins_repo_dir
 app.config['ALLOWED_EXTENSIONS']       = {'zip'}
-app.config['WERKZEUG_DEBUG_PIN']       = 'off'
 
 # Prepare env:
 helpers.prepare_logging_dir(log_file_path)
