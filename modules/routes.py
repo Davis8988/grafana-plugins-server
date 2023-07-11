@@ -45,7 +45,7 @@ def download_plugin(plugin_id, plugin_version):
         logging.error(f"Did not find any plugin: '{plugin_id}'  .zip files under version dir: \"{plugin_version_dir}\" - cannot download this plugin")
         return jsonify({})
     plugin_zip_file_name = first_level_files[0]
-    logging.info(f"Returning plugin zip file: {plugin_zip_file_name} to requester for download")
+    logging.info(f"Returning plugin zip file: {plugin_zip_file_name} for download")
     return send_from_directory(plugin_version_dir, plugin_zip_file_name, as_attachment=True)
 
 @app.route('/plugins/repo', methods = ['GET'])
@@ -56,7 +56,7 @@ def plugins_repo_page():
     json_pretty_data = helpers.get_pretty_json_data_str(json_data)
     logging.info(f"Returning json data")
     if json_pretty_data:
-        logging.info(json_pretty_data)
+        logging.info(f'\n{json_pretty_data}')
     return jsonify(json_data)
 
 @app.route('/plugins/repo/<path:plugin_id>', methods = ['GET'])
@@ -64,7 +64,7 @@ def plugins_repo_list_plugin_versions_page(plugin_id):
     logging.info(f'Accessed plugins/repo/{plugin_id} page')
     plugin_versions_json_file_content = helpers.construct_plugin_versions_json_file_data(plugin_id)
     if not plugin_versions_json_file_content:
-        logging.error(f'plugin_versions_json_file_content is unll')
+        logging.error(f'plugin_versions_json_file_content is null')
         plugin_versions_json_file_content = {}
     return jsonify(plugin_versions_json_file_content)
 

@@ -13,7 +13,8 @@
             "cwd": "${workspaceFolder}",
             "env": {
                 "FLASK_APP": "app.py",
-                "FLASK_DEBUG": "1"
+                "FLASK_DEBUG": "1",
+                "SERVER_PORT": "3022"
             },
             "args": [
                 "run",
