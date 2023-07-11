@@ -66,6 +66,8 @@ def plugins_repo_list_plugin_versions_page(plugin_id):
     if not plugin_versions_json_file_content:
         logging.error(f'plugin_versions_json_file_content is null')
         plugin_versions_json_file_content = {}
+    logging.info(f"Returning json data")
+    logging.info(f"\n{plugin_versions_json_file_content}")
     return jsonify(plugin_versions_json_file_content)
 
 
