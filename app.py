@@ -1,5 +1,6 @@
 from modules import runtime_config
 from flask import Flask
+from waitress import serve
 from flask_bootstrap import Bootstrap
 import os
 import sys
@@ -77,7 +78,7 @@ if __name__ == '__main__':
     logging.info(f"Starting grafana plugins server on address: {server_host}:{server_port}")
     try:
         prepare_runtime_env()
-        app.run(port=server_port, host=server_host) 
+        serve(app, port=server_port, host=server_host)
     except Exception as e:
         logging.info(f'An exception has occurred during execution of the plugins server')
         logging.error(f'{str(e)}')

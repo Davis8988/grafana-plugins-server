@@ -299,7 +299,7 @@ def read_plugin_details_from_plugin_json_file(plugin_json_file_path):
     return grafana_plugin_obj
 
 def list_first_level_dirs_under_path(dir_path):
-    logging.info("Listing 1st level directories under: {dir_path} ")
+    logging.info(f"Listing 1st level directories under: {dir_path} ")
     try:
         return [ name for name in os.listdir(dir_path) if os.path.isdir(os.path.join(dir_path, name)) ]  # Get only dirs
     except Exception as e:
