@@ -375,7 +375,8 @@ def construct_plugins_summary_json_file_data():
     for grafana_plugin_json_file in all_plugins_json_files_arr:
         grafana_plugin_obj = read_plugin_details_from_plugin_json_file(grafana_plugin_json_file)  # Also validates it..
         if not grafana_plugin_obj:
-            logging.warning(f"Failed to parse plugin json file: {grafana_plugin_json_file}")
+            logging.warning(f"Failed to parse plugin json file: {grafana_plugin_json_file} - Skipping it")
+            continue
         grafana_plugins_obj_arr.append(grafana_plugin_obj)
     if len(grafana_plugins_obj_arr) == 0:
         err_msg = f"Failed to read any of 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"
