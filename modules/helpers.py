@@ -295,7 +295,9 @@ def read_plugin_details_from_plugin_json_file(plugin_json_file_path):
     logging.info("Parsing json data into a GrafanaPlugin class obj")
     
     grafana_plugin_obj = grafana_plugin_class.GrafanaPlugin(**json_data) # Create GrafanaPlugin instance
-    grafana_plugin_class.validate_grafana_plugin_class_obj(grafana_plugin_obj)
+    if not grafana_plugin_class.validate_grafana_plugin_class_obj(grafana_plugin_obj):
+        logging.error("Failed to parse json data into a GrafanaPlugin class obj")
+        return None
     return grafana_plugin_obj
 
 def list_first_level_dirs_under_path(dir_path):
@@ -372,6 +374,9 @@ def construct_plugins_summary_json_file_data():
     grafana_plugins_obj_arr = []
     for grafana_plugin_json_file in all_plugins_json_files_arr:
         grafana_plugin_obj = read_plugin_details_from_plugin_json_file(grafana_plugin_json_file)  # Also validates it..
+        if not grafana_plugin_obj:
+            logging.warning(f"Failed to parse plugin json file: {grafana_plugin_json_file} - Skipping it")
+            continue
         grafana_plugins_obj_arr.append(grafana_plugin_obj)
     if len(grafana_plugins_obj_arr) == 0:
         err_msg = f"Failed to read any of 'plugin.json' files found({len(all_plugins_json_files_arr)}) under 1st level content of all directories under: {runtime_config.grafana_plugins_dir}"

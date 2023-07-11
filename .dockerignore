@@ -1,6 +1,8 @@
 # .dockerignore
 __pycache__
 uploads
+grafana_plugins
+logs
 Dockerfile
 .dockerignore
 README.md

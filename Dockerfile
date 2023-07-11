@@ -1,6 +1,6 @@
  
 # Dockerfile
-FROM python:3.9
+FROM python:3.9.17-slim
 
 ARG PIP_TRUSTED_HOSTS_STR="pypi.org files.pythonhosted.org pypi.python.org"
 

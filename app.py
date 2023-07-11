@@ -16,6 +16,7 @@ runtime_config.app = app
 script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 runtime_config.script_directory = script_directory
 flask_secret_key         = os.environ.get('FLASK_SECRET_KEY', "super-secret-key")
+thread_count             = os.environ.get('THREADS_COUNT',       100)  # Default 100 threads for waitress to function..
 server_port              = os.environ.get('SERVER_PORT',         3011)
 server_host              = os.environ.get('SERVER_HOST',      "0.0.0.0")
 log_file_path            = os.environ.get('LOG_FILE',            join_path(script_directory, "logs", "app.log"))
@@ -57,7 +58,7 @@ log_level = os.environ.get('LOG_LEVEL', logging.INFO)
 # create formatter
 formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s", "%Y-%m-%d %H:%M:%S")
 # add a rotating handler
-rotate_log_file_handler = RotatingFileHandler(log_file_path, maxBytes=40, backupCount=1)  # 1 kilobyte
+rotate_log_file_handler = RotatingFileHandler(log_file_path, maxBytes=1024)  # 1 kilobyte
 logging.basicConfig(
     level=log_level,
     format=' %(asctime)s :: %(levelname)-5s :: %(message)s',  # Updated logging format
@@ -79,11 +80,12 @@ def prepare_runtime_env():
     logging.info("Success - Finished preparing runtime environment")
 
 if __name__ == '__main__':
-    logging.info(f"Starting grafana plugins server on address: {server_host}:{server_port}")
-    try:
-        prepare_runtime_env()
-        serve(app, port=server_port, host=server_host)
-    except Exception as e:
-        logging.info(f'An exception has occurred during execution of the plugins server')
-        logging.error(f'{str(e)}')
-        raise e
+    while True:
+        logging.info(f"Starting grafana plugins server on address: {server_host}:{server_port}")
+        try:
+            prepare_runtime_env()
+            serve(app, port=server_port, host=server_host, threads=thread_count)
+        except Exception as e:
+            logging.info(f'An exception has occurred during execution of the plugins server')
+            logging.error(f'{str(e)}')
+            raise e

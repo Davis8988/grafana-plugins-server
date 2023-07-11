@@ -107,8 +107,8 @@ def remove_file():
     logging.info(f'Removed file: {file_name} from directory: {directory_name}')
     return redirect(url_for('index'))
 
-@app.route('/upload', methods=['POST'])
-def upload():
+@app.route('/upload_from_html_page_button', methods=['POST'])
+def upload_from_html_page_button():
     uploaded_file = request.files['file']
     if not grafana_plugin_file.validate_uploaded_zip_file(uploaded_file):
         return redirect(url_for('index'))
@@ -134,6 +134,10 @@ def upload():
     
     # Read plugin details:
     grafana_plugin_obj = helpers.read_plugin_details_from_plugin_json_file(plugin_json_file_path)  # When getting back an object from this method we know the object is validated - it has attributes: 'name' and 'version'
+    if not grafana_plugin_obj:
+        err_msg = f"Failed to upload file: {uploaded_file} because failed to read plugin details from plugin json file. Check the logs for more details on why"
+        logging.error(err_msg)
+        return err_msg
     
     plugin_id             = grafana_plugin_obj.id
     plugin_version        = grafana_plugin_obj.version
@@ -160,3 +164,60 @@ def upload():
         flash(error_message, 'error')
 
     return redirect(url_for('index'))
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    uploaded_file = request.files['file']
+    if not grafana_plugin_file.validate_uploaded_zip_file(uploaded_file):
+        return "error - zip file validation failed"
+
+    # Save the uploaded file into a temp dir first..
+    extract_file_name           = uploaded_file.filename
+    file_name_without_extension = os.path.splitext(extract_file_name)[0]
+    temp_uploaded_file_path     = helpers.save_file_in_dir(uploaded_file, temp_grafana_plugins_dir)
+    temp_plugin_dir             = join_path(temp_grafana_plugins_dir, file_name_without_extension)
+    
+    # Validate uploaded zip file:
+    if not grafana_plugin_file.validate_temp_save_zip_file(temp_uploaded_file_path):
+        return "error - temp saved zip file validation failed"
+        
+    # Print
+    helpers.print_zip_file_containing_files(temp_uploaded_file_path)
+    
+    # Get plugin.json file from inside the zip file
+    plugin_json_file_in_zip = helpers.get_plugins_json_file_path_from_zip_file(temp_uploaded_file_path)  # On error it will raise an exception
+    
+    # Save file 'plugin.json' into a temp dir
+    plugin_json_file_path = helpers.extract_file_from_zip_to_dir(temp_uploaded_file_path, plugin_json_file_in_zip, temp_plugin_dir)
+    
+    # Read plugin details:
+    grafana_plugin_obj = helpers.read_plugin_details_from_plugin_json_file(plugin_json_file_path)  # When getting back an object from this method we know the object is validated - it has attributes: 'name' and 'version'
+    if not grafana_plugin_obj:
+        err_msg = f"Failed to upload file: {uploaded_file} because failed to read plugin details from plugin json file. Check the logs for more details on why"
+        logging.error(err_msg)
+        return err_msg
+    
+    plugin_id             = grafana_plugin_obj.id
+    plugin_version        = grafana_plugin_obj.version
+    grafana_plugins_dir   = app.config['GRAFANA_PLUGINS_DIR']
+    plugin_zip_target_dir = join_path(grafana_plugins_dir, plugin_id, "versions", plugin_version)
+    helpers.remove_directory_with_content(plugin_zip_target_dir)  # Remove the old dir (if exists) containing the specific version's files
+    copied_zip_file_path  = helpers.copy_zip_file_to_plugins_dir(temp_uploaded_file_path, plugin_zip_target_dir)
+    file_path             = copied_zip_file_path
+    
+    try:
+        helpers.copy_file(plugin_json_file_path, join_path(plugin_zip_target_dir, "plugin.json"))
+        info_message = f"Success uploading and extracting file:  '{uploaded_file.filename}'"
+        logging.info(info_message)
+        logging.info(f'Cleaning uploaded and temp files..')
+        # Cleanup..
+        helpers.delete_file(temp_uploaded_file_path)
+        helpers.remove_directory_with_content(temp_plugin_dir)
+        return "success"
+    except Exception as e:
+        logging.error(f'Error while uploading file: {str(e)}')
+        helpers.delete_file(file_path)
+        helpers.remove_directory_with_content(temp_plugin_dir)
+        error_message = f'Error: {str(e)}\n'
+        return f"error - {str(e)}"
+        
