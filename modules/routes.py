@@ -231,7 +231,7 @@ def login():
     if request.method == 'POST':
         post_username = request.form['username']
         post_password = request.form['password']
-        logging.info("Authenticating using creds of: {}")
+        logging.info(f"Authenticating using creds of: {post_username}")
         if post_username != 'admin' or post_password != 'admin':
             error_message = 'Invalid Credentials. Please try again.'
         else:
