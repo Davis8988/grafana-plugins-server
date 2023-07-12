@@ -17,8 +17,8 @@
       </form>
     </div>
 	{% with messages = get_flashed_messages(with_categories=true) %}
-	<div id="login_flashes_div"></div>
 	  {% if messages %}
+	  <div id="login_flashes_div"></div>
       <ul class=flashes>
             {% for category, message in messages %}
             	{% if messages and category == 'error' %}
