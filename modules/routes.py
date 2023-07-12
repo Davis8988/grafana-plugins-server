@@ -244,5 +244,4 @@ def login():
             logging.info(f"Success authenticated using creds of: {post_username}")
             session['logged_in'] = True
             return redirect(url_for('index'))
-    
     return render_template('login.html')
