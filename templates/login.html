@@ -16,9 +16,8 @@
         <input type="submit"   class="btn" value="Login">
       </form>
     </div>
-	<div id="login_flashes_div"></div>
 	{% with messages = get_flashed_messages(with_categories=true) %}
-	
+	<div id="login_flashes_div"></div>
 	  {% if messages %}
       <ul class=flashes>
             {% for category, message in messages %}
