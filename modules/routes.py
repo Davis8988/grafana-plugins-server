@@ -235,7 +235,7 @@ def login():
         if post_username != 'admin' or post_password != 'admin':
             error_message = 'Invalid Credentials. Please try again.'
         else:
-            
+            logging.info(f"Success authenticated using creds of: {post_username}")
             session['logged_in'] = True
             return redirect(url_for('index'))
     flash(error_message, 'error')
