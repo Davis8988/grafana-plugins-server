@@ -232,4 +232,5 @@ def login():
             error = 'Invalid Credentials. Please try again.'
         else:
             return redirect(url_for('index'))
+    flash(error_message, 'error')
     return render_template('login.html', error=error)
