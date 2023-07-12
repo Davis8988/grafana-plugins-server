@@ -17,6 +17,7 @@ temp_grafana_plugins_dir = runtime_config.temp_grafana_plugins_dir
 def index():
     logging.info('Accessed main dashboard page')
     if not session.get('logged_in', False):
+        request.method = "GET"
         return redirect(url_for('login'))
     grafana_plugins_repo_directory = app.config['GRAFANA_PLUGINS_REPO_DIR']
     directories = [ name for name in os.listdir(grafana_plugins_repo_directory) if os.path.isdir(os.path.join(grafana_plugins_repo_directory, name)) ]  # Get only dirs
