@@ -231,7 +231,7 @@ def upload():
 def login():
     logging.info("Accessed login page")
     error_message = None
-    if not session.get('logged_in', False):
+    if session.get('logged_in', False):
         logging.info("Already logged in - redirecting to '/index'")
         return redirect(url_for('index'))
     if request.method == 'POST':
