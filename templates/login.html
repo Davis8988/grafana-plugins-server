@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title>Grafana Plugins Server - login page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='login_styles.css') }}">
+	<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='flashes_styles.css') }}">
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/error-bar.js') }}"></script>
+  </head>
+  <body>
+	<h1>Grafana Plugins Server</h1>
+    <div class="box">
+      <h2>Please login</h2>
+      <br>
+      <form action="" method="post">
+        <input type="text"     class="username-input-field" placeholder="Username" name="username" value="{{request.form.username }}" >
+        <input type="password" class="password-input-field" placeholder="Password" name="password" value="{{request.form.password }}" >
+        <input type="submit"   class="btn" value="Login">
+      </form>
+    </div>
+	{% with messages = get_flashed_messages(with_categories=true) %}
+	  {% if messages %}
+      <ul class=flashes>
+            {% for category, message in messages %}
+				{% if message %}
+				<div id="login_flashes_div"></div>
+					{% if messages and category == 'error' %}
+					<script>
+						let loginFormFlashes = document.getElementById("login_flashes_div");
+						ebar({ lvl: 4, target: loginFormFlashes, msg: "{{ message }}" });
+					</script>
+					{% elif messages and category == 'info' %}
+					<script>
+						let loginFormFlashes = document.getElementById("login_flashes_div");
+						ebar({ lvl: 2, target: loginFormFlashes, msg: "{{ message }}" });
+					</script>
+					{% endif %}
+				{% endif %}
+            {% endfor %}
+          </ul>
+      {% endif %}
+      {% endwith %}
+  </body>
+</html>
+

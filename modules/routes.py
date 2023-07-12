@@ -1,7 +1,7 @@
 from modules import runtime_config
 from modules import helpers
 from modules import grafana_plugin_file
-from flask import render_template, request, redirect, url_for, send_from_directory, Response, jsonify
+from flask import render_template, request, redirect, url_for, send_from_directory, Response, jsonify, session
 from flask import flash
 import os
 from os.path import join as join_path
@@ -16,6 +16,9 @@ temp_grafana_plugins_dir = runtime_config.temp_grafana_plugins_dir
 @app.route('/index', methods = ['GET', 'POST'])
 def index():
     logging.info('Accessed main dashboard page')
+    if not session.get('logged_in', False):
+        request.method = "GET"
+        return redirect(url_for('login'))
     grafana_plugins_repo_directory = app.config['GRAFANA_PLUGINS_REPO_DIR']
     directories = [ name for name in os.listdir(grafana_plugins_repo_directory) if os.path.isdir(os.path.join(grafana_plugins_repo_directory, name)) ]  # Get only dirs
     for x in directories:
@@ -221,3 +224,27 @@ def upload():
         error_message = f'Error: {str(e)}\n'
         return f"error - {str(e)}"
         
+
+
+# Route for handling the login page logic
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    logging.info("Accessed login page")
+    error_message = None
+    if session.get('logged_in', False):
+        logging.info("Already logged in - redirecting to '/index'")
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        post_username = request.form['username']
+        post_password = request.form['password']
+        logging.info(f"Authenticating using creds of: {post_username}")
+        if post_username != 'admin' or post_password != 'admin':
+            error_message = 'Invalid Credentials. Please try again.'
+            logging.error(error_message)
+            logging.error(f"Failed authenticating using creds of: {post_username}")
+            flash(error_message, 'error')
+        else:
+            logging.info(f"Success authenticated using creds of: {post_username}")
+            session['logged_in'] = True
+            return redirect(url_for('index'))
+    return render_template('login.html')

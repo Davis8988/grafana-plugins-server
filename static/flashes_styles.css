@@ -1,0 +1,45 @@
+
+/* Error Messages */
+.error-message {
+  color: #dc3545;
+}
+
+/* Information Messages */
+.info-message {
+  color: #17a2b8;
+}
+
+/* (C) ICONS */
+i.ico {
+  display: inline-block;
+  width: 20px;
+  text-align: center; 
+  font-style: normal;
+  font-weight: bold;
+}
+
+/* (D) CLOSE BUTTON */
+.bar { position: relative; }
+div.close {
+  position: absolute;
+  top: 30%;
+  right: 10px;
+  color: #888;
+  cursor: pointer;
+}
+
+.error {
+  padding: 10px;
+  margin: 10px;
+  color: #ba3939;
+  background: #ffe0e0;
+  border: 1px solid #a33a3a;
+}
+
+.success {
+  padding: 10px;
+  margin: 10px;
+  color: #2b7515;
+  background: #ecffd6;
+  border: 1px solid #617c42;
+}
