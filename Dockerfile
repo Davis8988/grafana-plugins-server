@@ -15,7 +15,7 @@ RUN echo "Installing curl" && apt-get clean all && \
     pip config set global.trusted-host "${PIP_TRUSTED_HOSTS_STR}" && \
     pip install --no-cache-dir -r requirements.txt && \
     echo "Cleaning.." && \
-    apt-get clean && \ 
+    apt-get clean all && \ 
     rm -rf /var/lib/apt/lists/*
 
 COPY . .
