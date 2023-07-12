@@ -3,7 +3,7 @@ version: "3.0"
 services:
   plugins-server:
     container_name: grafana-plugins-server
-    image: grafana-plugins-server:0.0.1
+    image: grafana-plugins-server:1.0.0
     restart: unless-stopped
     ports:
     - 3011:3011
