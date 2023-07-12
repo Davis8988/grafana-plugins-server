@@ -1,169 +1,23 @@
-<!-- templates/index.html -->
-<!DOCTYPE html>
 <html>
-<head>
-	<script type="text/javascript"
-         src="{{ url_for('static', filename='scripts/error-bar.js') }}"></script>
-    <title>Grafana Plugins Dashboard</title>
-	{{ runtime_config.bootstrap.css }}
-	{% block styles %}
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-	{% endblock %}
-</head>
-{% block content %}
-<body>
-    <h1>Grafana Plugins Dashboard</h1>
-
-	<h2>Upload Grafana Plugin Zip Files With Curl</h4>
-	<ul>
-		<li><strong>CMD:</strong> <div class="command-example">for /f %a in ('dir /b /s *.zip') do echo Uploading %a && curl -X POST -F file=@"%a" http://grafana-plugins-server:3011/upload</div></li>
-		<li><strong>Bash:</strong> <div class="command-example">for i in $(find /opt/dir -name *.zip -type f); do echo Uploading ${i} && curl -X POST -F file=@"${i}" http://grafana-plugins-server:3011/upload; done</div></li>
-	</ul>
-
-	<!-- (B) HTML CONTAINER -->
-	<br>
-	<h2>Upload Plugin Zip File Here</h2>
-	<div id="upload_file_messages_container"></div>
-	{% with messages = get_flashed_messages(with_categories=true) %}
-	{% if messages %}
-		<ul class=flashes>
-		{% for category, message in messages %}
-			{% if messages and category == 'error' %}
-			<script>
-				let uploadFileMessagesContainer = document.getElementById("upload_file_messages_container");
-				ebar({ lvl: 4, target: uploadFileMessagesContainer, msg: "{{ message }}" });
-			</script>
-			<!-- <div class="bar error">
-				<div class="close" onclick="this.parentElement.remove()">X</div>
-		  		<li>
-					<i class="ico">&#9747;</i>{{ message }}
-				</li>
-			</div> -->
-		  	{% elif messages and category == 'info' %}
-			  <script>
-				let uploadFileMessagesContainer = document.getElementById("upload_file_messages_container");
-				ebar({ lvl: 2, target: uploadFileMessagesContainer, msg: "{{ message }}" });
-			</script>
-		  	{% endif %}
-		{% endfor %}
-		</ul>
-	{% endif %}
-	{% endwith %}
-	{% block body %}{% endblock %}
-    <form method="POST" action="{{ url_for('upload_from_html_page_button') }}" enctype="multipart/form-data">
-        </select>
-        <input type="file" name="file">
-        <input type="submit" value="Upload">
-    </form>
-
-    <h2 class="plugins-title">Plugins</h2>
-
-	<ul style="list-style-type: none;">
-		{% set root_dir = app.config['GRAFANA_PLUGINS_DIR'] %}
-		{% for directory_name in helpers.list_first_level_dirs_under_path(root_dir) if directory_name.lower() != 'repo' %}
-		{% set plugin_dir_relative_url_path = directory_name %}
-		<li>
-			<div class="plugin-dir-name">
-				{{ directory_name }}
-				<button class="remove-button" onclick="confirmAndRemove('{{ plugin_dir_relative_url_path }}')">Remove</button>
-			</div>
-			{% set plugin_versions_dir = os.path.join(root_dir, directory_name, 'versions') %}
-			{% for version_str in helpers.list_first_level_dirs_under_path(plugin_versions_dir) %}
-			{% set plugin_version_dir_url_path = helpers.join_url_path(directory_name, 'versions', version_str) %}
-			{% set plugin_version_dir = os.path.join(plugin_versions_dir, version_str) %}
-			<li>
-				<ul style="padding-left: 50px;">
-					<li>
-						{% for plugin_zip_file_name in helpers.list_first_level_files_under_path(plugin_version_dir) if plugin_zip_file_name.endswith('.zip') %}
-							{% set plugin_zip_file_relative_url_path = helpers.join_url_path(plugin_version_dir_url_path, plugin_zip_file_name) %}
-							<div class="plugin-item">
-								<a href="{{ url_for('download_file_from_plugins', filename=plugin_zip_file_relative_url_path) }}" class="download-link">{{ version_str }}</a>
-								<button class="remove-button" onclick="confirmAndRemove('{{ plugin_version_dir_url_path }}')">Remove</button>
-							</div>
-						{% endfor %}
-					</li>
-				</ul>
-			{% endfor %}
-			</li>
-		{% endfor %}
-		</li>
-	</ul>
-	
-	<!-- Log Window -->
-	<div id="logging-window">
-		<!-- Separator bar -->
-		<div id="separator-bar" class="separator-bar"></div>
-		<h2>Log Window</h2>
-		<div id="logging-window-frame" class="log-window">
-			<pre id="output"></pre>
-		</div>
-	</div>
-
-
-	{{ runtime_config.bootstrap.js }}
-    <script>
-		var isScrolledDown = false
-        function confirmAndRemove(fileOrDirPath) {
-            if (confirm('Are you sure you want to remove this file or directory?')) {
-                window.location.href = '/remove/' + fileOrDirPath;
-            }
-        }
-		
-		
-		function scrollLogWindowToBottom() {
-			var logWindow = document.getElementById('logging-window-frame');
-			logWindow.scrollTop = logWindow.scrollHeight;
-			// logWindow.scrollTo(logWindow.scrollHeight, logWindow.scrollHeight);
-		}
-		
-		var output = document.getElementById('output');
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET', '{{ url_for('stream') }}');
-		xhr.send();
-
-		setInterval(function() {
-			output.textContent = xhr.responseText;
-			if (! isScrolledDown) {
-				scrollLogWindowToBottom();
-				isScrolledDown = true
-			}
-		}, 1000);
-		
-
-		// Toggle logging window visibility and expandability
-		var separatorBar = document.getElementById('separator-bar');
-		var loggingWindow = document.getElementById('logging-window');
-		var isExpanded = false;
-
-		separatorBar.addEventListener('mousedown', function(event) {
-			isExpanded = true;
-			var startY = event.clientY;
-			var startHeight = loggingWindow.offsetHeight;
-
-			function resize(event) {
-				var newHeight = startHeight + (event.clientY - startY);
-				if (newHeight < 200) {
-					newHeight = 200;
-				}
-				loggingWindow.style.height = newHeight + 'px';
-			}
-
-			function stopResize() {
-				isExpanded = false;
-				document.removeEventListener('mousemove', resize);
-				document.removeEventListener('mouseup', stopResize);
-			}
-
-			document.addEventListener('mousemove', resize);
-			document.addEventListener('mouseup', stopResize);
-		});
-
-		document.addEventListener('mouseup', function(event) {
-			if (!isExpanded) {
-				loggingWindow.classList.toggle('expanded-log-window');
-			}
-		});
-    </script>
-</body>
-{% endblock %}
+  <head>
+    <title>Flask Intro - login page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <div class="container">
+      <h1>Please login</h1>
+      <br>
+      <form action="" method="post">
+        <input type="text" placeholder="Username" name="username" value="{{
+          request.form.username }}">
+         <input type="password" placeholder="Password" name="password" value="{{
+          request.form.password }}">
+        <input class="btn btn-default" type="submit" value="Login">
+      </form>
+      {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+      {% endif %}
+    </div>
+  </body>
 </html>
