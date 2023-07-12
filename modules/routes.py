@@ -1,7 +1,7 @@
 from modules import runtime_config
 from modules import helpers
 from modules import grafana_plugin_file
-from flask import render_template, request, redirect, url_for, send_from_directory, Response, jsonify
+from flask import render_template, request, redirect, url_for, send_from_directory, Response, jsonify, session
 from flask import flash
 import os
 from os.path import join as join_path
@@ -226,11 +226,17 @@ def upload():
 # Route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    logging.info("Accessed login page")
     error_message = None
     if request.method == 'POST':
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+        post_username = request.form['username']
+        post_password = request.form['password']
+        logging.info("Authenticating using creds of: {}")
+        if post_username != 'admin' or post_password != 'admin':
             error_message = 'Invalid Credentials. Please try again.'
         else:
+            
+            session['logged_in'] = True
             return redirect(url_for('index'))
     flash(error_message, 'error')
     return render_template('login.html')
