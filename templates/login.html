@@ -5,7 +5,7 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login_styles.css') }}">
   </head>
   <body>
-    <div class="box">
+    <div id="login_form_div" class="box">
       <h1>Please login</h1>
       <br>
       <form action="" method="post">
@@ -13,32 +13,26 @@
         <input type="password" class="password-input-field" placeholder="Password" name="password" value="{{request.form.password }}" >
         <input type="submit"   class="btn" value="Login">
       </form>
-      {% with messages = get_flashed_messages(with_categories=true) %}
+    </div>
+	{% with messages = get_flashed_messages(with_categories=true) %}
 	  {% if messages %}
       <ul class=flashes>
             {% for category, message in messages %}
             	{% if messages and category == 'error' %}
             	<script>
-            		let uploadFileMessagesContainer = document.getElementById("upload_file_messages_container");
-            		ebar({ lvl: 4, target: uploadFileMessagesContainer, msg: "{{ message }}" });
+            		let loginFormDiv = document.getElementById("login_form_div");
+            		ebar({ lvl: 4, target: loginFormDiv, msg: "{{ message }}" });
             	</script>
-            	<!-- <div class="bar error">
-            		<div class="close" onclick="this.parentElement.remove()">X</div>
-            		<li>
-            			<i class="ico">&#9747;</i>{{ message }}
-            		</li>
-            	</div> -->
             	{% elif messages and category == 'info' %}
             	<script>
-            		let uploadFileMessagesContainer = document.getElementById("upload_file_messages_container");
-            		ebar({ lvl: 2, target: uploadFileMessagesContainer, msg: "{{ message }}" });
+            		let loginFormDiv = document.getElementById("login_form_div");
+            		ebar({ lvl: 2, target: loginFormDiv, msg: "{{ message }}" });
             	</script>
             	{% endif %}
             {% endfor %}
           </ul>
       {% endif %}
       {% endwith %}
-    </div>
   </body>
 </html>
 
