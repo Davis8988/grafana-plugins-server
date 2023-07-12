@@ -10,10 +10,11 @@ COPY requirements.txt .
 
 RUN echo "Installing curl" && apt-get clean all && \
     apt-get update; \
-    apt-get install curl && \
+    apt-get install curl && \ 
     echo "Configuring pip with trusted hosts: \"${PIP_TRUSTED_HOSTS_STR}\"" && \
     pip config set global.trusted-host "${PIP_TRUSTED_HOSTS_STR}" && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt && \
+    apt-get clean && \ rm -rf /var/lib/apt/lists/*
 
 COPY . .
 
