@@ -238,6 +238,7 @@ def login():
             logging.info(f"Success authenticated using creds of: {post_username}")
             session['logged_in'] = True
             return redirect(url_for('index'))
+    logging.error(error_message)
     logging.error(f"Failed authenticating using creds of: {post_username}")
     flash(error_message, 'error')
     return render_template('login.html')
