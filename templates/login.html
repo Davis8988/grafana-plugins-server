@@ -7,7 +7,7 @@
 	<script type="text/javascript" src="{{ url_for('static', filename='scripts/error-bar.js') }}"></script>
   </head>
   <body>
-    <div id="login_form_div" class="box">
+    <div class="box">
       <h1>Please login</h1>
       <br>
       <form action="" method="post">
@@ -16,7 +16,9 @@
         <input type="submit"   class="btn" value="Login">
       </form>
     </div>
+	<div id="login_form_div"></div>
 	{% with messages = get_flashed_messages(with_categories=true) %}
+	
 	  {% if messages %}
       <ul class=flashes>
             {% for category, message in messages %}
