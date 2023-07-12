@@ -232,7 +232,7 @@ def login():
     logging.info("Accessed login page")
     error_message = None
     if not session.get('logged_in', False):
-        logging.info(f"Already logged in - redirecting to '/index'")
+        logging.info("Already logged in - redirecting to '/index'")
         return redirect(url_for('index'))
     if request.method == 'POST':
         post_username = request.form['username']
