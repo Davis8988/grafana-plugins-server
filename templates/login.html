@@ -9,11 +9,9 @@
       <h1>Please login</h1>
       <br>
       <form action="" method="post">
-        <input type="text" placeholder="Username" name="username" value="{{
-          request.form.username }}">
-         <input type="password" placeholder="Password" name="password" value="{{
-          request.form.password }}">
-        <input class="btn btn-default" type="submit" value="Login">
+        <input type="text"     class="text-input-field" placeholder="Username" name="username" value="{{request.form.username }}" onFocus="field_focus(this, 'username');" onblur="field_blur(this, 'username');">
+        <input type="password" class="text-input-field" placeholder="Password" name="password" value="{{request.form.password }}" onFocus="field_focus(this, 'password');" onblur="field_blur(this, 'password');">
+        <input type="submit"   class="btn" value="Login">
       </form>
       {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}
